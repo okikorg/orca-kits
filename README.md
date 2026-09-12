@@ -26,6 +26,22 @@ time rather than in the files. More kits will land alongside it.
 To see a kit built from nothing in about ten minutes, read
 [Build it with your coding agent](https://docs.orcapods.ai/build-with-your-coding-agent).
 
+## Published kits on Orca
+
+Every kit in this repo is also published as a link that copies it into your workspace.
+
+| Kit | Copy it |
+| --- | --- |
+| [seo-helper](kits/seo-helper/) | https://app.orcapods.ai/kits/kit-utRCllawsrI2cqKdT |
+
+Three ways to use one:
+
+1. **Open the link.** It copies the kit in as editable agents you own. Nothing to install.
+2. **Add it with the CLI.** `orca kit add <link>`
+3. **Hand it to your coding agent** to adapt these files to your product, the way
+   [Build it with your coding agent](https://docs.orcapods.ai/build-with-your-coding-agent)
+   walks through.
+
 ## Install one
 
 Every kit here follows the same shape, so the same commands install any of them. Get the files,

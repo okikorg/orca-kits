@@ -1,7 +1,0 @@
-feat(rail): library rows in the nav block, session list on the Sessions page (#938)
-fix(sandbox): delete idle sessions sandboxes, reap own-runner orphans (#942)
-billing: grant signup credit at org creation, with a receipt (#941)
-chore(deps): bump vite from 5.4.2 to 5.4.11 (#940)
-test: cover the credit gate at zero balance (#936)
-perf(kernel): dispatch 100 tool calls in 0.3 ms, was 1.1 ms (#934)
-refactor: move the run registry behind an interface (#930)

@@ -7,33 +7,33 @@ ours.
 A **kit** is a snapshot of something already built and tested: one or more agents, the skills
 they depend on, and optionally a pod and a schedule. Copying one installs editable assets in
 your workspace, and from that moment they are ordinary agents you own, edit and delete like any
-others. See [Shared templates](https://docs.orcapods.ai/concepts/templates).
+others. See [Shared kits](https://docs.orcapods.ai/concepts/kits).
 
 ## The kits
 
 | Kit | What it does | Shape | Needs |
 | --- | --- | --- | --- |
-| [release-notes](release-notes/) | Turns merged pull request titles into release notes, and drops what a user cannot see | 1 agent, 1 skill | nothing |
-| [seo-helper](seo-helper/) | Researches a keyword, writes one post, draws its own figures, opens a draft pull request on your repo | 2 agents, 1 skill, 1 pod | GitHub connected app |
+| [seo-helper](kits/seo-helper/) | Researches a keyword, writes one post, draws its own figures, opens a draft pull request on your repo | 2 agents, 1 skill, 1 pod | GitHub connected app |
 
-**release-notes** is two files and takes a minute. It is the worked example in
-[Build it with your coding agent](https://docs.orcapods.ai/build-with-your-coding-agent), and the
-smallest thing that shows the split every other kit is built on: the agent owns the shape of one
-answer, the skill owns the house rules every agent of that kind should share.
+**seo-helper** is a real production workflow rather than a demo. It runs on a schedule, never
+merges anything, and is honest in every pull request about which numbers were verified and which
+were estimated. Merging is publishing, and that stays with you.
 
-**seo-helper** is a real production workflow. It runs on a schedule, never merges anything, and
-is honest in every pull request about which numbers were verified and which were estimated.
+It is also the pattern every kit here follows: the method lives in one skill, each agent's own
+prompt stays short, and everything specific to your site lives in a prompt you attach at run
+time rather than in the files. More kits will land alongside it.
 
-More kits will land here. Until then, the two above are the pattern to copy.
+To see a kit built from nothing in about ten minutes, read
+[Build it with your coding agent](https://docs.orcapods.ai/build-with-your-coding-agent).
 
 ## Install one
 
-Both kits follow the same shape, so the same commands install either. Get the files, import the
-skill, create the agents.
+Every kit here follows the same shape, so the same commands install any of them. Get the files,
+import the skill, create the agents.
 
 ```bash
 git clone https://github.com/okikorg/orca-kits
-cd orca-kits/<kit>
+cd orca-kits/kits/<kit>
 ```
 
 ```bash
@@ -58,7 +58,7 @@ YAML** once per file, then **Pods > New pod**.
 
 ## The prompt is the control surface
 
-seo-helper ships two prompt files: a template you fill in, and a filled-in example to calibrate
+Every kit ships two prompt files: a blank you fill in, and a filled-in example to calibrate
 against. That prompt is where your facts live: your domain, your repo, your topic lanes, your
 voice, the things the agents must never do.
 
@@ -82,8 +82,8 @@ Useful if you fork one, and the bar for anything added to this repo.
 - **A `marlin` agent's skill is complete in its `SKILL.md`.** On `runtime: marlin` the skill body
   is composed into the system prompt and the other files are not fetched. On `pi`, `claude`,
   `codex` and `vercel` the agent calls `activate_skill` and reads `references/` with
-  `read_skill_resource`. seo-helper assumes the second; release-notes keeps everything in the
-  body.
+  `read_skill_resource`. seo-helper assumes the second, and each kit's README names the runtime
+  it was tested on.
 - **Nothing ships that publishes, sends or spends.** Kits write drafts, files and pull requests,
   and email the workspace owner. A person presses the button.
 - **A blocked run stops cleanly.** Missing facts produce one `SKIPPED (<reason>)` line naming
@@ -104,8 +104,8 @@ traps in it, and the loop that fixes what is wrong. The by-hand version is
 [Start here](https://docs.orcapods.ai/start-here).
 
 To publish what you build as a link anyone can copy, see
-[Shared templates](https://docs.orcapods.ai/concepts/templates). A kit link works for people who
-have never heard of Orca.
+[Shared kits](https://docs.orcapods.ai/concepts/kits). A kit link works for people who have never
+heard of Orca.
 
 ## Contributing
 
@@ -117,4 +117,4 @@ on.
 
 MIT, see [LICENSE](LICENSE). seo-helper is derived from the
 [SEO Agent Pack](https://github.com/DigiHold/seo-agent-pack) by Nicolas Lecocq and carries its
-own [LICENSE](seo-helper/LICENSE) preserving that notice.
+own [LICENSE](kits/seo-helper/LICENSE) preserving that notice.

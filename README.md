@@ -92,8 +92,6 @@ Useful if you fork one, and the bar for anything added to this repo.
 - **Every run leaves a record**, because nobody watches the chat: a status line in the pod or the
   agent's own file, and one email.
 - **No em dashes**, anywhere, in any copy an agent writes.
-- **`profiles.md`** in each kit is a read-only copy of every system prompt in one place, so you
-  can read a kit without opening every YAML file.
 
 ## Write your own
 

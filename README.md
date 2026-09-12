@@ -14,18 +14,11 @@ others. See [Shared kits](https://docs.orcapods.ai/concepts/kits).
 | Kit | What it does | Shape | Needs |
 | --- | --- | --- | --- |
 | [seo-helper](kits/seo-helper/) | Researches a keyword, writes one post, draws its own figures, opens a draft pull request on your repo | 2 agents, 1 skill, 1 pod | GitHub connected app |
-
-**seo-helper** is a real production workflow rather than a demo. It runs on a schedule, never
-merges anything, and is honest in every pull request about which numbers were verified and which
-were estimated. Merging is publishing, and that stays with you.
-
-It is also the pattern every kit here follows: the method lives in one skill, each agent's own
-prompt stays short, and everything specific to your site lives in a prompt you attach at run
-time rather than in the files. More kits will land alongside it.
+| [marketing-helper](kits/marketing-helper/) | Analyses why a product is not signing anyone up, writes the plan to your next signup goal, then runs it: today's tasks every morning, the number every Friday, a review that changes the plan | 6 agents, 1 skill, 1 pod | Workspace email; GitHub connected app optional |
 
 ## Published kits on Orca
 
-Every kit in this repo is also published as a link that copies it into your workspace.
+Published kits can be copied into your workspace from the link.
 
 | Kit | Copy it |
 | --- | --- |
@@ -69,7 +62,7 @@ YAML** once per file, then **Pods > New pod**.
 
 ## The prompt is the control surface
 
-Every kit ships two prompt files: a blank you fill in, and a filled-in example to calibrate
+Every kit ships a prompt template you fill in, and some ship a filled-in example to calibrate
 against. That prompt is where your facts live: your domain, your repo, your topic lanes, your
 voice, the things the agents must never do.
 

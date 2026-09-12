@@ -23,20 +23,38 @@ It is also the pattern every kit here follows: the method lives in one skill, ea
 prompt stays short, and everything specific to your site lives in a prompt you attach at run
 time rather than in the files. More kits will land alongside it.
 
-To see a kit built from nothing in about ten minutes, read
-[Build it with your coding agent](https://docs.orcapods.ai/build-with-your-coding-agent).
+## Published kits on Orca
 
-## Install one
+Every kit in this repo is also published as a link that copies it into your workspace.
 
-Every kit here follows the same shape, so the same commands install any of them. Get the files,
-import the skill, create the agents.
+| Kit | Copy it |
+| --- | --- |
+| [seo-helper](kits/seo-helper/) | https://app.orcapods.ai/kits/kit-utRCllawsrI2cqKdT |
+
+Three ways to use one:
+
+1. **Open the link.** It copies the kit in as editable agents you own. Nothing to install.
+2. **Add it with the CLI.** `orca kit add <link>`
+3. **Hand it to your coding agent** to adapt these files to your product, the way
+   [Build it with your coding agent](https://docs.orcapods.ai/build-with-your-coding-agent)
+   walks through.
+
+If you do not have the CLI yet:
+
+```bash
+curl -fsSL https://orcapods.ai/install.sh | sh
+orca login
+```
+
+## Install from the files
+
+Copying gives you the kit as published. Install from the files instead when you want to change
+it first: edit the YAML and the skill here, then install what you edited. Every kit has the same
+shape, so the same commands install any of them.
 
 ```bash
 git clone https://github.com/okikorg/orca-kits
 cd orca-kits/kits/<kit>
-```
-
-```bash
 orca skills import ./skills/<skill-name>
 orca agents create -f agents/<agent>.yaml
 ```
@@ -45,13 +63,6 @@ Order matters: the agent document names its skill and the server checks that the
 Repeat the `agents create` line once per file in `agents/`. A kit with more than one agent also
 needs a pod, which is one dashboard action; the kit's own README says what to name it and who
 leads.
-
-If you do not have the CLI yet:
-
-```bash
-curl -fsSL https://orcapods.ai/install.sh | sh
-orca login
-```
 
 Or do the whole thing in the dashboard: **Skills > Import package**, then **Agents > Import
 YAML** once per file, then **Pods > New pod**.

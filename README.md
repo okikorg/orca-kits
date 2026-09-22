@@ -52,12 +52,13 @@ git clone https://github.com/okikorg/orca-kits
 cd orca-kits/kits/<kit>
 orca skills import ./skills/<skill-name>
 orca agents create -f agents/<agent>.yaml
+orca pools create <pod> --member <lead>:lead --member <member>
 ```
 
 Order matters: the agent document names its skill and the server checks that the skill exists.
 Repeat the `agents create` line once per file in `agents/`. A kit with more than one agent also
-needs a pod, which is one dashboard action; the kit's own README says what to name it and who
-leads.
+needs a pod; the kit's own README gives the exact `pools create` line with its name, lead and
+members. Schedules have no CLI command yet and are created in the dashboard.
 
 Or do the whole thing in the dashboard: **Skills > Import package**, then **Agents > Import
 YAML** once per file, then **Pods > New pod**.
@@ -85,11 +86,11 @@ Useful if you fork one, and the bar for anything added to this repo.
 - **The method lives in a skill, the agent stays short.** An agent's system prompt says who it
   is and which reference to read first. The rules live in `skills/<name>/SKILL.md` and its
   `references/`, so they are editable in one place and shared between agents.
-- **A `marlin` agent's skill is complete in its `SKILL.md`.** On `runtime: marlin` the skill body
-  is composed into the system prompt and the other files are not fetched. On `pi`, `claude`,
-  `codex` and `vercel` the agent calls `activate_skill` and reads `references/` with
-  `read_skill_resource`. seo-helper assumes the second, and each kit's README names the runtime
-  it was tested on.
+- **References load on every runtime, marlin included.** `activate_skill` returns the `SKILL.md`
+  body plus a resources manifest, and `read_skill_resource` fetches each `references/` file on
+  demand, so a long method costs context only when its step arrives. A short method lives whole
+  in `SKILL.md` (outreach-helper, engineering-helper); a long one splits into `references/`
+  (seo-helper, marketing-helper). Each kit's README names the runtime it was tested on.
 - **Nothing ships that publishes, sends or spends.** Kits write drafts, files and pull requests,
   and email the workspace owner. A person presses the button.
 - **A blocked run stops cleanly.** Missing facts produce one `SKIPPED (<reason>)` line naming

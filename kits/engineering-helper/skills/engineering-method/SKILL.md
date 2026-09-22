@@ -53,7 +53,7 @@ Read the current run message and every attached Prompt in full before deciding a
 | Always skip | no | the skip rules below |
 | Notification | no | `email_me` at the end of every `batch`, from the lead only |
 
-Blocked: write `SKIPPED (insufficient prompt; missing <items>)` to the log and end. Attended, also say in one message what is missing. Never guess a repository.
+Blocked: write `SKIPPED (insufficient prompt; missing <items>)` to the log and end. When no slug could be fixed, the log is `log/unknown.md`. The log line is written before the answer, never skipped because the run was short. Attended, also say in one message what is missing. Never guess a repository.
 
 The prompt overrides any general rule in this method where the two differ.
 

@@ -24,7 +24,7 @@ This skill is complete in itself. Everything you need is in this document.
 - **`trigger`, `source` and `fetched` are written once and never edited.** Drafts are disposable; evidence is not.
 - **Never invent a fact about a prospect.** Every claim in a draft traces to a source recorded in the draft file.
 - **Members write only their own area.** Hand-offs go through the pool, never through chat.
-- **No em dashes** anywhere: files, posts, emails, chat.
+- **No em dashes** anywhere: files, posts, emails, chat, including the answer you give at the end of a run. Where you would reach for one, use a comma, a colon or a full stop. Before you finish any text, read it back and remove every one.
 - **Every run appends one log line**, success or failure.
 
 ## The prompt gate, every agent, every run

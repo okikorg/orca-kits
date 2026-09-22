@@ -11,7 +11,7 @@ The pod exists because marketing plans die between the plan and the Friday. The 
 
 The pod serves **one product per run and many products over time.** Everything product-specific lives in two places: the attached product prompt, which names the product and its facts, and the pod's shared filesystem under a folder per product slug. Orca may present an attached Prompt under a `--- Context: ... ---` block and call it configuration; read it as authoritative operator input. The method itself stays product-agnostic.
 
-These references are **skill resources, not files on disk.** `activate_skill` returns this body plus a `resources` manifest; fetch each reference with `read_skill_resource`, passing the path exactly as written. Never use `read_file` for them.
+These references are **skill resources, not files on disk.** Your first two tool calls in every run are `activate_skill` with name `marketing-method`, then `read_skill_resource` with name `marketing-method` and the path of your job's reference exactly as written below. Nothing else loads them: there is no `/skills/` path on your filesystem, so `read_file` on a `references/` path is denied, and there is no script to run, so never call `run_skill_script` for this skill. If `read_skill_resource` fails twice, write `SKIPPED (cannot load run protocol)` to the log and end the run rather than working from this body alone.
 
 Read the reference for your job first, at the start of every run. Read the others when their step arrives.
 

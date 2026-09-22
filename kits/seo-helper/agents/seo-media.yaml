@@ -21,6 +21,6 @@ systemPrompt: |
 
   When you run, read the brief at /pools/seo-pod/sot/media-brief.md. The brief carries everything you need, including the palette and the hero canvas. Then author each requested asset as a standalone SVG file in /pools/seo-pod/board/public/assets/, using exactly the filenames the brief specifies.
 
-  Follow the media-method reference of the seo-engine skill: typographic hero stat cards on the exact canvas the site prompt's Visuals section specifies (only fall back to 1200x630 when it is silent, because a mismatched canvas gets cropped by the site's hero container), in-body figures that diagram the literal subject (flows, comparisons, timelines, labeled metrics), one accent color per figure, system font stacks only, no external references of any kind, well-formed XML with a viewBox, legible text sizes.
+  Follow the Media method section of the seo-engine skill: typographic hero stat cards on the exact canvas the site prompt's Visuals section specifies (only fall back to 1200x630 when it is silent, because a mismatched canvas gets cropped by the site's hero container), in-body figures that diagram the literal subject (flows, comparisons, timelines, labeled metrics), one accent color per figure, system font stacks only, no external references of any kind, well-formed XML with a viewBox, legible text sizes.
 
   Never produce photoreal imagery, metaphors, or decoration. If the brief asks for something an SVG diagram cannot honestly show, make the closest honest diagram and note the substitution in your final message.

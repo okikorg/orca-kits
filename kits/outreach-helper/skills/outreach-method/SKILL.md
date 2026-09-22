@@ -35,6 +35,7 @@ Read the current run message and every attached Prompt in full before deciding a
 |---|---|---|
 | Campaign slug | yes | if exactly one campaign folder exists under `/pools/outreach-pod/campaign/`, use it and say so in the log; otherwise SKIP |
 | Job | yes | an attended session with no job named is a conversation: answer from the pool, write nothing but the log |
+| Job is yours | yes | `sweep` belongs to the scout, `draft` to the writer, `review` to the reviewer. A lead given one of those does not delegate it and does not ask: it is blocked, exactly like a missing slug, and writes `SKIPPED (job <name> belongs to <agent>; run daily or weekly on the lead, or open a session on <agent>)` |
 | The offer and the ask | for `draft` | none |
 | Who qualifies, and who does not | for `sweep` | none |
 | Signals: the sources and their trigger phrases | for `sweep` | none |
@@ -46,7 +47,7 @@ Read the current run message and every attached Prompt in full before deciding a
 | Kill rule | no | 15 sends from one source with zero replies retires it |
 | Notification | no | `email_me` at the end of every scheduled job, from the lead only |
 
-Blocked: write `SKIPPED (insufficient campaign prompt; missing <items>)` to the log and end. Attended, also say in one message what is missing. Never guess a campaign from the pool or an earlier run.
+Blocked, for any row above: write the `SKIPPED (...)` line to the log first (`log/unknown.md` when no slug could be fixed) and end. Attended, the answer is one message that starts with the same `SKIPPED` line and says what is missing; not a question, not an offer to delegate. Never guess a campaign from the pool or an earlier run.
 
 The prompt overrides any general rule in this method where the two differ.
 

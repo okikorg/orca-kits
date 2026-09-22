@@ -44,7 +44,7 @@ Read the current run message and every attached Prompt in full before deciding a
 | Repository, as `owner/name` | yes | if exactly one repo folder exists under `/pools/engineering-pod/run/`, use it and say so in the log; otherwise SKIP |
 | Slug, a short name for this repository | no | the repository name, lowercased |
 | Job | yes | an attended session with no job named is a conversation: answer from the pool, write nothing but the log |
-| The issue query | for `batch` | none |
+| The issue query, in the operator's words | for `batch` | none. A missing query is a block, never a default. The seven-day window under `batch` is a default only inside a query that says *recently created*; it is not a query on its own, and the lead never chooses one |
 | The issue number, and for `revise` the pull request number | for `issue` and `revise` | none |
 | Job is yours | yes | `implement` and `revise` belong to the coder, `review` to the reviewer. A lead given one of those does not delegate it and does not ask: it is blocked, and writes `SKIPPED (job <name> belongs to <agent>; run batch or issue on the lead)` |
 | Issues per run | no | 5 |
@@ -90,7 +90,7 @@ The main job. Scheduled, or attended when the operator asks for a sweep.
 
 1. Prompt gate. Read the last twenty lines of `log/<slug>.md` and `run/<slug>/outcomes.md`.
 2. **Resolve the issue query.** The prompt says which issues in the operator's own words. Translate it into repository-scoped searches:
-   - *recently created*: open issues sorted by creation, newest first, within the window the prompt names, default the last seven days.
+   - *recently created*: open issues sorted by creation, newest first, within the window the prompt names, default the last seven days. The default is the window, not the query: without a query in the prompt the gate has already stopped the run.
    - *assigned to me*: open issues whose assignee is the operator's login from the prompt.
    - *in a project*: issues on the named project board, in the named column or status if given.
    - *by label*: open issues carrying the named labels.

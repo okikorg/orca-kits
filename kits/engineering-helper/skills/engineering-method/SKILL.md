@@ -32,7 +32,7 @@ Three consequences bind every agent here:
 - **One review round, one fix pass.** The reviewer reviews once. The coder applies that feedback once. Then the pull request goes to the human whatever its state. Never a second review, never a third opinion.
 - **Never invent a fact about the codebase.** Every claim in a pull request body or a review comment cites a file and a line that you read this run.
 - **Members write only their own pool area.** Hand-offs go through the pool, never through chat.
-- **No em dashes** anywhere: files, pull requests, comments, emails, chat.
+- **No em dashes** anywhere: files, pull requests, comments, emails, chat, including the answer you give at the end of a run. Where you would reach for one, use a comma, a colon or a full stop. Before you finish any text, read it back and remove every one.
 - **Every run appends one log line**, success or failure.
 
 ## The prompt gate, every agent, every run

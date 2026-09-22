@@ -32,7 +32,7 @@ The method lives in the `marketing-method` skill, so the agents stay short and t
 
 **2. Create the agents.** Agents > Import YAML, once each for the six files in `agents/`. With the CLI: `orca agents create -f agents/<agent>.yaml`, once per file.
 
-**3. Create the pod.** Pods > New pod: name `marketing-pod`, lead `marketing-lead`, members `marketing-dispatcher`, `marketing-progress`, `marketing-metrics`, `marketing-reviewer`, `marketing-followups`. With the CLI: `orca pools create marketing-pod --member marketing-lead:lead --member marketing-dispatcher --member marketing-progress --member marketing-metrics --member marketing-reviewer --member marketing-followups`. The agents hand work to each other through the pod's shared files; the layout is in `skills/marketing-method/references/pool-layout.md`.
+**3. Create the pod.** Pods > New pod: name `marketing-pod`, lead `marketing-lead`, members `marketing-dispatcher`, `marketing-progress`, `marketing-metrics`, `marketing-reviewer`, `marketing-followups`. With the CLI: `orca pools create marketing-pod --member marketing-lead:lead --member marketing-dispatcher --member marketing-progress --member marketing-metrics --member marketing-reviewer --member marketing-followups`. The agents hand work to each other through the pod's shared files; the layout is in the **The pool** section of `skills/marketing-method/SKILL.md`.
 
 **4. Connect GitHub** from the lead's banner, if your marketing docs live in a repo.
 
@@ -58,7 +58,7 @@ If you arrive with a plan (a document, an artifact, a tracker) rather than a bla
 
 Everything the pod writes is namespaced by the product slug: `strategy/<slug>/`, `tasks/<slug>/`, `metrics/<slug>/`, and every memory the lead saves starts with `[product: <slug>]`. To run a second product, write a second product prompt with a different slug and attach it to its own sessions and schedules. Nothing else changes, and the two never mix: the lead recalls with the tag and discards everything tagged otherwise.
 
-This is also why the lead is the only agent with memory. Orca's Memory Bank is scoped per agent profile, so an untagged bank serving two products would feed both sets of facts into every run. The tag plus the recall filter is what makes one bank safe; the rules are in `skills/marketing-method/references/memory-rules.md`.
+This is also why the lead is the only agent with memory. Orca's Memory Bank is scoped per agent profile, so an untagged bank serving two products would feed both sets of facts into every run. The tag plus the recall filter is what makes one bank safe; the rules are in the **Memory rules** section of `skills/marketing-method/SKILL.md`.
 
 ## What it will not do
 
@@ -80,7 +80,7 @@ This is also why the lead is the only agent with memory. Orca's Memory Bank is s
 
 **The product prompt is the control surface.** When the plan or the tasks disappoint, the fix usually belongs there: the goal, the time budget, the competitors, the channels you have ruled out, the metrics you can actually supply, the register the drafts must be written in. Edit the prompt and run `replan`.
 
-**The skill is the method.** `analysis-method.md` holds what an analysis must contain, `planning-method.md` the shape of a plan, `task-method.md` the task anatomy and how today is chosen, `metrics-method.md` the attribution rules, `review-method.md` the delta form, `followup-method.md` what counts as a loose end, `memory-rules.md` the multi-product rules. Edit these when the *method* is wrong, not when one product differs.
+**The skill is the method.** `SKILL.md` holds it all, one section per job: the run protocol, the pool layout, the memory rules, what an analysis must contain, the shape of a plan, the task anatomy and how today is chosen, the progress report, the attribution rules, the review's delta form, and what counts as a loose end. Edit these when the *method* is wrong, not when one product differs.
 
 **Cost.** The lead, the metrics agent and the reviewer ship on a strong model because a wrong number or a wrong verdict costs more than tokens. The dispatcher, the progress agent and the follow-ups agent ship on a cheap one; their work is counting and copying, and the lead reads it. Swap the `model` field on any agent; check Dev pricing first, an unpriced id quarantines the run.
 
@@ -88,4 +88,4 @@ This is also why the lead is the only agent with memory. Orca's Memory Bank is s
 
 Built from a real go-to-market review and the plan it produced. MIT licensed, see the repository `LICENSE`.
 
-**Runtime.** Tested on `runtime: marlin`. The method is long, so it is split into `references/` and each agent loads only the section its job needs with `read_skill_resource`; that works on marlin as on the other runtimes, the same way seo-helper loads its references.
+**Runtime.** Tested on `runtime: marlin`. The skill is deliberately complete in its own `SKILL.md` with no `references/` directory: on marlin the skill body is composed into the system prompt and there is no tool that fetches supporting files, so a method split across `references/` never reaches the model. On `pi`, `claude`, `codex` and `vercel` the agent has `activate_skill` and `read_skill_resource`, and splitting the method back out is safe there.

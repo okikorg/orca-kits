@@ -45,6 +45,8 @@ Read the current run message and every attached Prompt in full before deciding a
 | Slug, a short name for this repository | no | the repository name, lowercased |
 | Job | yes | an attended session with no job named is a conversation: answer from the pool, write nothing but the log |
 | The issue query | for `batch` | none |
+| The issue number, and for `revise` the pull request number | for `issue` and `revise` | none |
+| Job is yours | yes | `implement` and `revise` belong to the coder, `review` to the reviewer. A lead given one of those does not delegate it and does not ask: it is blocked, and writes `SKIPPED (job <name> belongs to <agent>; run batch or issue on the lead)` |
 | Issues per run | no | 5 |
 | Base branch | no | discover the repository default branch |
 | Branch prefix | no | `eng/` |
@@ -53,7 +55,7 @@ Read the current run message and every attached Prompt in full before deciding a
 | Always skip | no | the skip rules below |
 | Notification | no | `email_me` at the end of every `batch`, from the lead only |
 
-Blocked: write `SKIPPED (insufficient prompt; missing <items>)` to the log and end. When no slug could be fixed, the log is `log/unknown.md`. The log line is written before the answer, never skipped because the run was short. Attended, also say in one message what is missing. Never guess a repository.
+Blocked, for any row above: write the `SKIPPED (...)` line to the log first (`log/unknown.md` when no slug could be fixed) and end. The log line is written before the answer, never skipped because the run was short. Attended, the answer is one message that starts with the same `SKIPPED` line and says what is missing; not a question, not narration about checking. Never guess a repository.
 
 The prompt overrides any general rule in this method where the two differ.
 

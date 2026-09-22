@@ -247,4 +247,6 @@ Append to `/pools/outreach-pod/log/<slug>.md`:
 
 `<yyyy-mm-dd> <hh:mm> | <agent> | <job> | DONE <one line with the file written>` or `... | SKIPPED (<reason>)`.
 
+The date and time come from `time_now`, called in the same run, never typed from memory or copied from an earlier line.
+
 Every write is preceded by a read. Ids, rows, draft files and review files are looked up before they are created; found means update in place. Re-running any job after an interruption finishes it without duplicating anything.

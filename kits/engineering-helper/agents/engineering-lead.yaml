@@ -5,10 +5,13 @@ runtime: marlin
 # stays fleet-neutral.
 workerMode: sandbox
 # The lead resolves a query, delegates, records outcomes and writes an email.
-# It reads no code and writes none, so a cheap model does this well. Any
-# priced id works; check Dev pricing in your workspace before changing it, an
-# unpriced id quarantines the run.
-model: openrouter:anthropic/claude-haiku-4.5
+# It reads no code and writes none. It shipped on claude-haiku-4.5 first, but
+# in testing that model kept answering a blocked run with a question instead
+# of the SKIPPED line and the log entry, three runs out of six, after the
+# rule had been put in this prompt and in the skill. The strong model holds
+# the gate. Any priced id works; check Dev pricing in your workspace before
+# changing it, an unpriced id quarantines the run.
+model: openrouter:anthropic/claude-sonnet-4.6
 tools:
   - "@default"
   - "@orchestration"

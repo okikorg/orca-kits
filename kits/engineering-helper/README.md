@@ -82,7 +82,7 @@ Read the pull request and the review before you automate anything. One issue tel
 
 **The skill is the method.** `SKILL.md` holds the prompt gate, the pool layout, the issue query, the per-issue protocol, the skip rules, the pull request body format and the review method. Edit it when the *method* is wrong, not when one repository differs.
 
-**Cost.** The coder and the reviewer ship on a strong model; the lead ships on a cheap one. The lead resolves a query, delegates and writes an email, while the coder writes code a human will merge and the reviewer is the only verification that exists. Swap the `model` field on any agent; check Dev pricing first, an unpriced id quarantines the run.
+**Cost.** All three agents ship on a strong model. The coder writes code a human will merge and the reviewer is the only verification that exists. The lead only resolves a query, delegates and writes an email, and it shipped on a cheap model first, but in testing that model kept answering a blocked run with a question instead of the `SKIPPED` line and the log entry, so it moved up. Swap the `model` field on any agent; check Dev pricing first, an unpriced id quarantines the run.
 
 **Runtime.** Tested on `runtime: marlin`. The skill is deliberately complete in its own `SKILL.md` with no `references/` directory: on marlin the skill body is composed into the system prompt and there is no tool that fetches supporting files, so a method split across `references/` never reaches the model. On `pi`, `claude`, `codex` and `vercel` the agent has `activate_skill` and `read_skill_resource`, and splitting the method back out is safe there.
 

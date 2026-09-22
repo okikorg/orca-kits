@@ -84,13 +84,14 @@ and does not remember.
 Useful if you fork one, and the bar for anything added to this repo.
 
 - **The method lives in a skill, the agent stays short.** An agent's system prompt says who it
-  is and which reference to read first. The rules live in `skills/<name>/SKILL.md` and its
-  `references/`, so they are editable in one place and shared between agents.
-- **References load on every runtime, marlin included.** `activate_skill` returns the `SKILL.md`
-  body plus a resources manifest, and `read_skill_resource` fetches each `references/` file on
-  demand, so a long method costs context only when its step arrives. A short method lives whole
-  in `SKILL.md` (outreach-helper, engineering-helper); a long one splits into `references/`
-  (seo-helper, marketing-helper). Each kit's README names the runtime it was tested on.
+  is and which section of the skill to read first. The rules live in `skills/<name>/SKILL.md`,
+  so they are editable in one place and shared between agents.
+- **A `marlin` agent's skill is complete in its `SKILL.md`.** On `runtime: marlin` the skill body
+  is composed into the system prompt and there is no tool that fetches supporting files, so a
+  method split across `references/` never reaches the model. On `pi`, `claude`, `codex` and
+  `vercel` the agent has `activate_skill` and `read_skill_resource` and may split its method
+  into `references/`. seo-helper still carries `references/` and was tested on `pi`; every
+  other kit here ships on `marlin`, and each kit's README names the runtime it was tested on.
 - **Nothing ships that publishes, sends or spends.** Kits write drafts, files and pull requests,
   and email the workspace owner. A person presses the button.
 - **A blocked run stops cleanly.** Missing facts produce one `SKIPPED (<reason>)` line naming

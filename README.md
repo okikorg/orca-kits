@@ -22,9 +22,13 @@ others. See [Shared kits](https://docs.orcapods.ai/concepts/kits).
 
 Published kits can be copied into your workspace from the link.
 
-| Kit | Copy it |
-| --- | --- |
-| [seo-helper](kits/seo-helper/) | https://app.orcapods.ai/kits/kit-utRCllawsrI2cqKdT |
+| Kit | What it does | Copy it |
+| --- | --- | --- |
+| Sonar (built in) | Answers questions about Orca from the live docs | https://app.orcapods.ai/kits/kit-0AOaC9ybJiz0Fmx5Q |
+| [seo-helper](kits/seo-helper/) | An SEO writer on a schedule; you approve the draft | https://app.orcapods.ai/kits/kit-utRCllawsrI2cqKdT |
+| [marketing-helper](kits/marketing-helper/) | A go-to-market pod: plan, daily tasks, the weekly number | https://app.orcapods.ai/kits/kit-09OBnwaduvhF6q4Wp |
+| [engineering-helper](kits/engineering-helper/) | Works the issue backlog into reviewed draft PRs; you merge | https://app.orcapods.ai/kits/kit-1jZ9hIL6V7mlF3PA9 |
+| [outreach-helper](kits/outreach-helper/) | Finds buying signals, drafts the opener and bumps; you send | https://app.orcapods.ai/kits/kit-1yLbRXXqg30IfRbk3 |
 
 Three ways to use one:
 

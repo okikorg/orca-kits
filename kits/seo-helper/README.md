@@ -114,10 +114,10 @@ usually belongs there rather than in the draft: voice, topic lanes, the file
 conventions a post must follow, your punctuation and length rules. Edit the
 prompt and the next run picks it up, with no redeploy.
 
-**The skill is the method.** `writing-rules.md` holds the anti-slop machinery
-(banned words and phrases, the humanizer pass, the self-review checklist),
-`keyword-method.md` the five gates and the competitor pass, `media-method.md` the
-figure rules. Edit these when the *method* is wrong, not when one site's
+**The skill is the method.** `SKILL.md` holds it all, one section per step: the
+Writing rules section has the anti-slop machinery (banned words and phrases, the
+humanizer pass, the self-review checklist), the keyword method the five gates and
+the competitor pass, the media method the figure rules. Edit these when the *method* is wrong, not when one site's
 preferences differ. Anything site-specific belongs in the prompt.
 
 **Cost.** The shipped models are the cheap end: roughly $0.20 per million input

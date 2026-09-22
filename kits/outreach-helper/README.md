@@ -27,11 +27,11 @@ No data vendor, no mailbox connection, no CRM.
 
 ## Start here
 
-**1. Import the skill.** Skills > Import package > `skills/outreach-method/`.
+**1. Import the skill.** Skills > Import package > `skills/outreach-method/`. With the CLI: `orca skills import ./skills/outreach-method`.
 
-**2. Create the agents.** Agents > Import YAML, once each for the four files in `agents/`.
+**2. Create the agents.** Agents > Import YAML, once each for the four files in `agents/`. With the CLI: `orca agents create -f agents/<agent>.yaml`, once per file.
 
-**3. Create the pod.** Pods > New pod: name `outreach-pod`, lead `outreach-lead`, members `outreach-scout`, `outreach-writer`, `outreach-reviewer`.
+**3. Create the pod.** Pods > New pod: name `outreach-pod`, lead `outreach-lead`, members `outreach-scout`, `outreach-writer`, `outreach-reviewer`. With the CLI: `orca pools create outreach-pod --member outreach-lead:lead --member outreach-scout --member outreach-writer --member outreach-reviewer`.
 
 **4. Write your campaign prompt.** Copy `prompts/campaign-prompt.template.md`, fill it in, save it under **Prompts**. Attach it to every session and every scheduled run for that campaign.
 
@@ -86,7 +86,7 @@ Worth knowing before you install it rather than in week two.
 
 **Cost.** The scout, the writer and the reviewer ship on a strong model; the lead ships on a cheap one. That inverts `marketing-helper` deliberately. This lead merges rows, counts minutes and writes a list, while the judgement sits in what qualifies and what gets written, which are the two places where being cheap costs you a reply. Swap the `model` field on any agent; check Dev pricing first, an unpriced id quarantines the run.
 
-**Runtime.** Tested on `runtime: marlin`, and the skill is deliberately complete in its own `SKILL.md` with no `references/` directory. On marlin the skill body is composed into the system prompt and supporting files are not fetched, so a method split across references would silently never load. If you fork this onto `claude` or `codex`, splitting it back out into references is safe.
+**Runtime.** Tested on `runtime: marlin`. The skill is complete in its own `SKILL.md` with no `references/` directory because the method is short enough to carry whole and one file is easier to edit. Splitting it into `references/` is safe on every runtime, marlin included: the agent loads them on demand with `read_skill_resource`, the way seo-helper and marketing-helper do.
 
 ## One pod, several campaigns
 
@@ -94,4 +94,4 @@ Everything is namespaced by the campaign slug: `campaign/<slug>/`, `prospects/<s
 
 ## License
 
-MIT, see `LICENSE`.
+MIT, see the repository `LICENSE`.

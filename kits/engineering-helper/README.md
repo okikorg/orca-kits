@@ -40,11 +40,11 @@ A skip with a reason in your morning email is worth more than a plausible-lookin
 
 ## Start here
 
-**1. Import the skill.** Skills > Import package > `skills/engineering-method/`.
+**1. Import the skill.** Skills > Import package > `skills/engineering-method/`. With the CLI: `orca skills import ./skills/engineering-method`.
 
-**2. Create the agents.** Agents > Import YAML, once each for the three files in `agents/`.
+**2. Create the agents.** Agents > Import YAML, once each for the three files in `agents/`. With the CLI: `orca agents create -f agents/<agent>.yaml`, once per file.
 
-**3. Create the pod.** Pods > New pod: name `engineering-pod`, lead `engineering-lead`, members `engineering-coder`, `engineering-reviewer`.
+**3. Create the pod.** Pods > New pod: name `engineering-pod`, lead `engineering-lead`, members `engineering-coder`, `engineering-reviewer`. With the CLI: `orca pools create engineering-pod --member engineering-lead:lead --member engineering-coder --member engineering-reviewer`.
 
 **4. Connect GitHub** from the lead's banner, and check the connection's scope covers the repository you want.
 
@@ -84,7 +84,7 @@ Read the pull request and the review before you automate anything. One issue tel
 
 **Cost.** The coder and the reviewer ship on a strong model; the lead ships on a cheap one. The lead resolves a query, delegates and writes an email, while the coder writes code a human will merge and the reviewer is the only verification that exists. Swap the `model` field on any agent; check Dev pricing first, an unpriced id quarantines the run.
 
-**Runtime.** Tested on `runtime: marlin`, and the skill is deliberately complete in its own `SKILL.md` with no `references/` directory. On marlin the skill body is composed into the system prompt and supporting files are not fetched, so a method split across references would silently never load.
+**Runtime.** Tested on `runtime: marlin`. The skill is complete in its own `SKILL.md` with no `references/` directory because the method is short enough to carry whole and one file is easier to edit. Splitting it into `references/` is safe on every runtime, marlin included: the agent loads them on demand with `read_skill_resource`, the way seo-helper and marketing-helper do.
 
 ## One pod, several repositories
 
@@ -92,4 +92,4 @@ Everything is namespaced by slug: `run/<slug>/`, `work/<slug>/`, `reviews/<slug>
 
 ## License
 
-MIT, see `LICENSE`.
+MIT, see the repository `LICENSE`.

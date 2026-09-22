@@ -28,11 +28,11 @@ The method lives in the `marketing-method` skill, so the agents stay short and t
 
 ## Start here
 
-**1. Import the skill.** Skills > Import package > `skills/marketing-method/`.
+**1. Import the skill.** Skills > Import package > `skills/marketing-method/`. With the CLI: `orca skills import ./skills/marketing-method`.
 
-**2. Create the agents.** Agents > Import YAML, once each for the six files in `agents/`.
+**2. Create the agents.** Agents > Import YAML, once each for the six files in `agents/`. With the CLI: `orca agents create -f agents/<agent>.yaml`, once per file.
 
-**3. Create the pod.** Pods > New pod: name `marketing-pod`, lead `marketing-lead`, members `marketing-dispatcher`, `marketing-progress`, `marketing-metrics`, `marketing-reviewer`, `marketing-followups`. The agents hand work to each other through the pod's shared files; the layout is in `skills/marketing-method/references/pool-layout.md`.
+**3. Create the pod.** Pods > New pod: name `marketing-pod`, lead `marketing-lead`, members `marketing-dispatcher`, `marketing-progress`, `marketing-metrics`, `marketing-reviewer`, `marketing-followups`. With the CLI: `orca pools create marketing-pod --member marketing-lead:lead --member marketing-dispatcher --member marketing-progress --member marketing-metrics --member marketing-reviewer --member marketing-followups`. The agents hand work to each other through the pod's shared files; the layout is in `skills/marketing-method/references/pool-layout.md`.
 
 **4. Connect GitHub** from the lead's banner, if your marketing docs live in a repo.
 
@@ -46,7 +46,7 @@ Internally, Orca may present a saved Prompt to the agent in a block labelled `Co
 
 **8. Take the decisions.** Open `strategy/<slug>/decisions.md` (or read them in the email). Answer them in an attended session on `marketing-lead`: `Run the marketing method. Job: replan. Product: <slug>.` then say what you decided. Every engine that was waiting unblocks in the same run.
 
-**9. Turn on the two schedules.** Point one at the pod each weekday morning with `Run the marketing method. Job: daily.` and one at Friday afternoon with `Run the marketing method. Job: weekly.`, both with the product prompt attached. They ship with this kit **stopped**, which is deliberate: nothing spends on a schedule its new owner has not seen. Start them when the plan is the one you want to run.
+**9. Turn on the two schedules.** Point one at the pod each weekday morning with `Run the marketing method. Job: daily.` and one at Friday afternoon with `Run the marketing method. Job: weekly.`, both with the product prompt attached. Create them under Schedules in the dashboard (there is no CLI command for schedules yet). When this kit is copied from a published link they arrive **stopped**, which is deliberate: nothing spends on a schedule its new owner has not seen. Start them when the plan is the one you want to run.
 
 **10. Work the day.** The morning email is the day. Do the tasks, then tell the dispatcher: open a session on `marketing-dispatcher` and say `done T-003 T-004`, or `block T-007 on D-02`, or just `next`. Drop anything else the pod should know into `/pools/marketing-pod/inbox/<slug>/notes/` as a note; every agent reads it.
 
@@ -86,4 +86,6 @@ This is also why the lead is the only agent with memory. Orca's Memory Bank is s
 
 ## Credit
 
-Built from a real go-to-market review and the plan it produced. MIT licensed, see `LICENSE`.
+Built from a real go-to-market review and the plan it produced. MIT licensed, see the repository `LICENSE`.
+
+**Runtime.** Tested on `runtime: marlin`. The method is long, so it is split into `references/` and each agent loads only the section its job needs with `read_skill_resource`; that works on marlin as on the other runtimes, the same way seo-helper loads its references.

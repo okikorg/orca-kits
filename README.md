@@ -1,28 +1,31 @@
 # Orca kits
 
-Working agents you can copy into your own [Orca](https://orcapods.ai) workspace: the agent
-documents, the skills they run on, and the prompts that point them at your product instead of
-ours.
+Ready-made agents for [Orca](https://orcapods.ai), the cloud platform that runs AI agents. Each
+kit is a working agent, or a small team of them, with the skills it runs on and a prompt you
+point at your own product. Copy one from a link and it is yours: ordinary agents in your
+workspace that you edit, run and delete like any other.
 
-A **kit** is a snapshot of something already built and tested: one or more agents, the skills
-they depend on, and optionally a pod and a schedule. Copying one installs editable assets in
-your workspace, and from that moment they are ordinary agents you own, edit and delete like any
-others. See [Shared kits](https://docs.orcapods.ai/concepts/kits).
+A kit is a snapshot of something already built and tested: one or more agents, the skills they
+depend on, and sometimes a pod and a schedule. See [Shared kits](https://docs.orcapods.ai/concepts/kits).
 
 ## Onboard with your coding agent
 
-The fastest way in is to hand the job to Claude Code, Cursor or Codex. Paste this prompt and it
-installs the CLI, signs in, and adds a kit from the table below before it writes anything new:
+The fastest way in is to hand the job to a coding agent (Claude Code, Cursor, Codex, etc.).
+Paste this prompt. It installs the CLI, signs in, and adds a kit from the table below before it
+writes anything new:
 
 ```text
-Onboard me to Orca, the cloud platform that runs AI agents. Work through https://docs.orcapods.ai/build-with-your-coding-agent, written for coding agents.
+Onboard me to Orca, the cloud platform that runs AI agents.
+Work through https://docs.orcapods.ai/build-with-your-coding-agent,
+written for coding agents.
 
-When `orca login` prints a one-time code, relay it and the URL so I can approve it on another device. Ask me what job I want done before writing anything. If a published kit already does it, add that instead of building from scratch. See https://github.com/okikorg/orca-kits#published-kits-on-orca
+When `orca login` prints a one-time code, relay it and the URL
+so I can approve it on another device.
+
+Ask me what job I want done before writing anything.
+If a published kit already does it, add that instead of building
+from scratch. See https://github.com/okikorg/orca-kits#published-kits-on-orca
 ```
-
-The same prompt sits behind the **Onboard your agent** button on [orcapods.ai](https://orcapods.ai).
-The guide it follows, [Build it with your coding agent](https://docs.orcapods.ai/build-with-your-coding-agent),
-is written for the agent, not for you, so there is nothing to read first.
 
 ## The kits
 

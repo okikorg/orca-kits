@@ -9,6 +9,21 @@ they depend on, and optionally a pod and a schedule. Copying one installs editab
 your workspace, and from that moment they are ordinary agents you own, edit and delete like any
 others. See [Shared kits](https://docs.orcapods.ai/concepts/kits).
 
+## Onboard with your coding agent
+
+The fastest way in is to hand the job to Claude Code, Cursor or Codex. Paste this prompt and it
+installs the CLI, signs in, and adds a kit from the table below before it writes anything new:
+
+```text
+Onboard me to Orca, the cloud platform that runs AI agents. Work through https://docs.orcapods.ai/build-with-your-coding-agent, written for coding agents.
+
+When `orca login` prints a one-time code, relay it and the URL so I can approve it on another device. Ask me what job I want done before writing anything. If a published kit already does it, add that instead of building from scratch. See https://github.com/okikorg/orca-kits#published-kits-on-orca
+```
+
+The same prompt sits behind the **Onboard your agent** button on [orcapods.ai](https://orcapods.ai).
+The guide it follows, [Build it with your coding agent](https://docs.orcapods.ai/build-with-your-coding-agent),
+is written for the agent, not for you, so there is nothing to read first.
+
 ## The kits
 
 | Kit | What it does | Shape | Needs |

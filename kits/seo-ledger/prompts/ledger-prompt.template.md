@@ -57,12 +57,18 @@ Anything after those sections is ignored.
 Site domain: `<example.com>`. Rank against Google organic, location
 `<location name or code>`, language `<en>`.
 
-## Rules repo
+## Rules repo (optional)
+
+Leave this section out if the writer's rules live only as a skill in your
+Orca workspace. Reviews then stay in the record folder and arrive by email,
+and you apply them to the skill yourself.
+
+Include it if you keep the writer's rules as a file in a repo:
 
 The writer's keyword rules live in `<owner>/<rules-repo>` at
 `<path/to/SKILL.md>`, in the section headed `<## The keyword method>`.
-Review proposals are pull requests against that repo changing only that
-section.
+Each review also opens a draft pull request against that repo changing only
+that section.
 
 ## Cadences
 

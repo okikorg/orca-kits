@@ -4,11 +4,11 @@ runtime: marlin
 # workerMode "sandbox". Leave workerSubstrate/workerImage unset so placement
 # stays fleet-neutral.
 workerMode: sandbox
-# Parsing PR bodies and writing small JSON records is careful work, not
-# creative work. Sonnet holds a fixed schema and a fixed folder boundary
-# better than the cheaper ids, and a wrong record here misleads every review
-# that reads it later.
-model: openrouter:anthropic/claude-sonnet-4.6
+# Parsing PR bodies and writing small JSON records is bounded work with a
+# fixed schema, so it runs on the cheapest id on OpenRouter's allowlist, the
+# same one the writer uses. The schema and the folder boundary are enforced
+# by the skill's rails, not by the model's judgement.
+model: openrouter:openai/gpt-5.6-luna
 tools:
   - "@default"
   - "@orchestration"

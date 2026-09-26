@@ -112,16 +112,21 @@ Everything above the blank line is the writer's; everything below is yours. A re
 
 ## Writing to the repo
 
-Every write goes through `call_connected_app_tool` with three top-level fields: `app` (`composio-github`), `name` (the GitHub tool), and `arguments` (the tool's own fields). `name` is never inside `arguments`. If the tool answers "app and name are required", the call never reached GitHub; fix the shape and call again.
+You never commit to the default branch. Every run that has something to write does it through one pull request of its own, which you open and, once every file on it is verified, merge yourself. That is the only pull request you ever merge; everything else you open stays a draft for a human.
 
-- One file per write, with `GITHUB_CREATE_OR_UPDATE_FILE_CONTENTS` on the default branch: `owner`, `repo`, `path`, `branch`, `message`, `content`, and the file's current `sha` when it already exists (read it first). Never a multi-file commit for records, and never a new branch.
-- After every write, read the path back on the default branch. The write counts only when the read returns the new content. A tool result that says success is not enough; the read-back is.
-- A write that fails twice for the same path stops the run: write the status line with `STOPPED (<path>: <error>)`, post to the board, and leave the index unchanged so the next run retries from the same place.
-- Nothing is reported that was not verified. If the run ends with zero verified writes, the status line says `RECORDED 0`, whatever was attempted.
+Every call goes through `call_connected_app_tool` with three top-level fields: `app` (`composio-github`), `name` (the GitHub tool), and `arguments` (the tool's own fields). `name` is never inside `arguments`. If the tool answers "app and name are required", the call never reached GitHub; fix the shape and call again.
+
+1. Create the branch `seo-ledger/<date>-<hhmm>` from the default branch, once per run, only when there is at least one record or index change to write.
+2. One file per write, with `GITHUB_CREATE_OR_UPDATE_FILE_CONTENTS` on that branch: `owner`, `repo`, `path`, `branch`, `message`, `content`, and the file's current `sha` when the file already exists on the default branch (read it first). Never a multi-file commit, never a write to the default branch. Records first, the index last.
+3. After every write, read the path back on the branch. The write counts only when the read returns the new content. A tool result that says success is not enough; the read-back is.
+4. Open a pull request from the branch against the default branch, titled `[seo-ledger] <n> records, <date>`, labeled `seo-ledger`, body a list of every path with its outcome (`merged`, `closed`, `ranks`, `index`). Not a draft.
+5. Merge that pull request yourself with the squash method, then read one written path back on the default branch to confirm it landed. Only then do the writes count as recorded.
+6. If any write fails twice for the same path, or the merge is refused, stop: leave the branch and the pull request as they are, write the status line with `STOPPED (<path or merge>: <error>) - <PR URL>`, post to the board, and leave the index unchanged so the next run retries from the same place. A human resolves the open pull request.
+7. Nothing is reported that was not verified on the default branch. If the run ends with zero verified writes, the status line says `RECORDED 0`, whatever was attempted.
 
 ## Rails
 
-- Commits on the default branch touch only the record folder. Anything else is a pull request.
+- Every change you make to the site's repo touches only the record folder, lands on a branch of your own, and reaches the default branch through your own pull request, which you merge only after every file on it is verified. Nothing else you open is ever merged by you.
 - One content-bearing write per model turn. Read before overwrite. Never delete a record; a wrong record gets corrected in place with `parseWarnings` saying what changed.
 - No memory_save. No site facts in any file outside the prompt.
 - When the prompt gate fails, when a repo write fails twice, or when the connected app is unreachable, stop with a SKIPPED line rather than partial state.

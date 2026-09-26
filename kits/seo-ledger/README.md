@@ -41,12 +41,16 @@ cadences are set in the prompt, not in the schedule.
 
 ## What it writes
 
-- `<record folder>/<slug>.json`, one per draft, on the default branch.
+- `<record folder>/<slug>.json`, one per draft.
 - `<record folder>/_index.json`, its only state.
 - `<record folder>/reviews/<date>.md`, at most once per review cadence, also
   sent by email.
 - `/agents/seo-ledger/status.md` in the pool area, one line per run.
 - A draft pull request against the rules repo, only when the prompt names one.
 
-It commits to the default branch in the record folder only. Everything else
-is a review for a human to act on.
+It never commits to the default branch. Each run's writes go to a branch of
+its own, one file per commit, each read back, then land through one pull
+request the agent opens and merges itself once every file is verified. That
+is the only pull request it merges; a review against a rules repo stays a
+draft for a human. If a write or the merge fails, the pull request stays
+open for a human and the run reports STOPPED.

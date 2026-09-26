@@ -42,7 +42,7 @@ Read `<record folder>/_index.json` from the default branch. It holds `recorded` 
 The writer keeps a pick record per draft in the record folder on its branch, written before the article. Your job is to complete it, not to reconstruct it.
 
 1. List the record folder on the default branch. Every record there arrived by merge. For each one without an `outcome`, find its pull request with one repository-scoped search for the head branch `seo/<slug>` (the prompt says the prefix; `seo/` by default), then add `pr`, `prUrl`, `outcome: "merged"` and `mergedAt`. One write per record, commit message `seo-ledger: <slug> merged`, preserving every field the writer wrote.
-2. List pull requests carrying the draft label that are closed without merge, with one search. For each whose slug has no file under `<record folder>/closed/`, read `<record folder>/<slug>.json` from the pull request's head commit, which GitHub keeps after the branch is deleted, and write it to `<record folder>/closed/<slug>.json` with `outcome: "closed"`, `closedAt`, and `closeReason` taken from the last comment by a human, or `null` when there is none.
+2. List pull requests carrying the draft label that are closed without merge, with one search. For each whose slug has no file under `<record folder>/closed/`, read `<record folder>/<slug>.json` from the pull request's head commit, which GitHub keeps after the branch is deleted (use the ref `pull/<number>/head`, or the head sha from the pull request; the branch name itself is gone), and write it to `<record folder>/closed/<slug>.json` with `outcome: "closed"`, `closedAt`, and `closeReason` taken from the last comment by a human, or `null` when there is none.
 3. A pull request with no record on its head commit is a draft made before the writer kept records. Only then parse its body with the PR body spec from the prompt, mark the record `"source": "pr-body"`, and list in `parseWarnings` what could not be read. When the prompt has no spec, record the title, dates and outcome and leave the writer's fields `null`.
 4. Open drafts get no record on the default branch until they merge or close. Never touch a pull request: no comments, no labels, no closes.
 5. Update `recorded` in the index with every pull request number you completed.
@@ -69,10 +69,11 @@ If DataForSEO is not connected or fails twice in a row, skip this whole step and
 
 ### 4. Index and status (every run)
 
-1. Write `_index.json` back to the record folder.
+1. Write `_index.json` back to the record folder, its own write, after every record write has been verified.
 2. Append one line to `/agents/seo-ledger/status.md`:
    `<date> | <job> | RECORDED <n> new, <m> updated | RANKS <k> records or skipped (<why>) | REVIEW <reviews/date.md> or none (<why>)`
    or `<date> | <job> | SKIPPED (<reason>)`.
+   `<n>` and `<m>` count verified writes only (see Writing to the repo). A write whose tool call failed, or whose read-back did not return the new content, is not recorded and must not be counted. Reporting a record you did not verify is the one failure this agent must never have, because every later review trusts the count.
 3. Post to the pool board only when a human must act: a pull request whose body could not be parsed at all, a review that proposes changes, or a repo write that failed twice.
 
 ## The record schema
@@ -108,6 +109,15 @@ The writer writes the first half at pick time and you never change it. You add t
 ```
 
 Everything above the blank line is the writer's; everything below is yours. A record you had to build from a pull request body carries `"source": "pr-body"` and whatever writer fields the body gave, the rest `null`. Numbers stay numbers; `n/a` becomes `null`. Dates are `YYYY-MM-DD`.
+
+## Writing to the repo
+
+Every write goes through `call_connected_app_tool` with three top-level fields: `app` (`composio-github`), `name` (the GitHub tool), and `arguments` (the tool's own fields). `name` is never inside `arguments`. If the tool answers "app and name are required", the call never reached GitHub; fix the shape and call again.
+
+- One file per write, with `GITHUB_CREATE_OR_UPDATE_FILE_CONTENTS` on the default branch: `owner`, `repo`, `path`, `branch`, `message`, `content`, and the file's current `sha` when it already exists (read it first). Never a multi-file commit for records, and never a new branch.
+- After every write, read the path back on the default branch. The write counts only when the read returns the new content. A tool result that says success is not enough; the read-back is.
+- A write that fails twice for the same path stops the run: write the status line with `STOPPED (<path>: <error>)`, post to the board, and leave the index unchanged so the next run retries from the same place.
+- Nothing is reported that was not verified. If the run ends with zero verified writes, the status line says `RECORDED 0`, whatever was attempted.
 
 ## Rails
 

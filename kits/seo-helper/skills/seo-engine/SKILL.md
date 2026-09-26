@@ -114,6 +114,8 @@ Follow The keyword method section in full, in whichever mode pre-flight establis
 
 Step 5 (read the live top 3, coverage map, gap list, one-sentence differentiation angle) is mandatory in both modes. No sentence, no article.
 
+When the brief is done: create the branch `seo/<slug>` from the default branch and commit the pick record to it (see the keyword method's Output section), one write, before briefing media or writing a word of the article.
+
 ### 4. Write
 
 Follow the Writing rules section (blocking checklist), through the site prompt's voice section. Format the piece for the site's blog: the prompt says whether posts are Markdown, MDX or components, what front matter or metadata fields they use, and where they live. Match the existing posts' conventions exactly; open one or two recent posts from the repo and mirror their shape rather than trusting the prompt alone.
@@ -136,8 +138,8 @@ Run the self-review checklist at the end of the Writing rules section on the fin
 
 All through the GitHub connected app, never a local clone:
 
-1. Create a branch `seo/<slug>` from the default branch.
-2. Commit the post file (the prompt's content path and format) and the SVG assets (the prompt's asset path, or next to the post per the repo's convention). Use separate content-bearing calls for the post, each asset, and each metadata file. One model turn must generate at most one file-write call.
+1. The branch `seo/<slug>` already exists and already holds the pick record, created right after the brief (see the keyword method's Output section). If it does not, something went wrong earlier: create it now and commit the record first.
+2. Commit the post file (the prompt's content path and format) and the SVG assets (the prompt's asset path, or next to the post per the repo's convention) to that branch. Use separate content-bearing calls for the post, each asset, and each metadata file. One model turn must generate at most one file-write call.
 3. If the site has a registry, index or sitemap file that lists posts (the prompt says so), update it in the same branch, matching the existing entry format exactly.
 4. Open a **draft** pull request against the default branch, titled `[SEO draft] <title>`, labeled `seo-draft` (create the label if missing). If draft PRs are unavailable, open a normal PR titled `[DRAFT] [SEO draft] <title>`.
 5. PR body: primary keyword, mode (`verified` or `heuristic`), intent, volume and difficulty when verified, the differentiation sentence, the self-review result, and the line "This is a draft. Review and merge to publish. I never merge."
@@ -223,9 +225,39 @@ Read the actual top 3 ranking pages for the keyword (fetch them; skip aggregator
 3. **The differentiation sentence (write it down)**: one clear sentence answering "why would someone read mine instead of the current top 3?", naming 2 or 3 concrete value-adds you will deliver.
 4. If you cannot write that sentence convincingly, do not ship this keyword. Pick another. Matching the SERP is not enough; beating it is the bar.
 
-### Output: the brief
+### Output: the brief and the pick record
 
-Primary keyword, secondary keywords, intent, mode, volume/difficulty (verified mode only), the coverage map and gaps, the differentiation sentence with its value-adds, and the verified facts (fetched live) the writing may use. The writer covers the baseline, fills the gaps, and leads with the angle.
+The brief is what you write from: primary keyword, secondary keywords, intent, mode, volume and difficulty (verified mode only), the coverage map and gaps, the differentiation sentence with its value-adds, and the verified facts (fetched live) the writing may use. The writer covers the baseline, fills the gaps, and leads with the angle.
+
+The pick record is the same reasoning as data, written for whoever reads the ledger later. Write it to `<record folder>/<slug>.json` on the branch **before the article**, right after the brief, so a run that dies while writing still leaves its reasoning behind. The record folder comes from the site prompt; when the prompt names none, use `.orca/seo/picks/` at the repo root. Never put site facts in it, only this run's reasoning:
+
+```json
+{
+  "schemaVersion": 1,
+  "slug": "<slug>",
+  "pickedAt": "YYYY-MM-DD",
+  "keyword": "<primary keyword>",
+  "lane": null,
+  "intent": "informational | commercial",
+  "mode": "verified | heuristic",
+  "volume": null,
+  "difficulty": null,
+  "candidates": [
+    { "keyword": "...", "volume": null, "difficulty": null, "gate": "passed | relevance | demand | intent | winnability | cannibalization", "note": "one line" }
+  ],
+  "rejected": [
+    { "keyword": "...", "gate": "<the gate it failed>", "why": "one line" }
+  ],
+  "chosen": {
+    "why": "one line on why this beat the other candidates",
+    "differentiation": "<the sentence from the brief>",
+    "gap": "<what the top results leave open>"
+  },
+  "competitors": [ { "url": "...", "covers": "one line" } ]
+}
+```
+
+`candidates` holds every keyword you weighed, `rejected` the ones you dropped and the gate that dropped them, `chosen` why the winner won. `lane` is the prompt's lane number when the prompt has lanes, else `null`. Unknown numbers are `null`, never a guess. Nothing after this step edits the record; the ledger agent adds the outcome later.
 
 ## Writing rules: the blocking standard for every piece
 

@@ -22,8 +22,10 @@ label `<seo-draft>` and come from branches named `<seo/><slug>`.
 
 The writer writes its pick record to `<path/to/picks/><slug>.json` on each
 branch, before the article. Read that folder on the default branch first and
-complete what is there. It is the only place you commit to. The index lives
-at `<path/to/picks/>_index.json`. Use the same path in the writer's site
+complete what is there. It is the only place you write to, always through a
+pull request of your own that you merge once every file is verified, never a
+direct commit to the default branch. The index lives at
+`<path/to/picks/>_index.json`. Use the same path in the writer's site
 prompt; when neither prompt names one, both agents use `.orca/seo/picks/`.
 
 ## PR body spec (optional)

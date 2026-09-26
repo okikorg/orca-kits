@@ -35,6 +35,7 @@ from scratch. See https://github.com/okikorg/orca-kits#published-kits-on-orca
 | [marketing-helper](kits/marketing-helper/) | Analyses why a product is not signing anyone up, writes the plan to your next signup goal, then runs it: today's tasks every morning, the number every Friday, a review that changes the plan | 6 agents, 1 skill, 1 pod | Workspace email; GitHub connected app optional |
 | [outreach-helper](kits/outreach-helper/) | Watches the public places your buyers show a problem, proposes the ones worth writing to with the evidence, drafts an opener and two bumps, tracks the sequence. You send | 4 agents, 1 skill, 1 pod | Workspace email |
 | [engineering-helper](kits/engineering-helper/) | Picks up issues the way you describe them, writes the change, reviews it, and emails what happened to each. Draft PRs with a review already on them. You merge | 3 agents, 1 skill, 1 pod | GitHub connected app; workspace email |
+| [seo-ledger](kits/seo-ledger/) | Sits beside seo-helper. Turns every draft PR into one record: the pick, merged or closed, why, and its search position over time. Proposes keyword-rule changes as a PR once the records say something | 1 agent, 1 skill, joins the seo pod | GitHub connected app; DataForSEO optional |
 
 ## Published kits on Orca
 

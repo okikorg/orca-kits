@@ -21,7 +21,7 @@ Hard rules that override everything:
 - Every factual claim is verified live during the run or deleted.
 - GitHub and DataForSEO are reached as connected apps: `search_connected_app_tools` to find the tool, `call_connected_app_tool` to run it. For GitHub, query the exact owner/name from the prompt with repository-scoped reads. Never enumerate repositories or App installations, and never call `GITHUB_LIST_APP_INSTALLATIONS` or `GITHUB_LIST_ACCESSIBLE_REPOSITORIES`; they are not connection checks.
 - **The target repo lives only in GitHub.** Read it and write it through the GitHub connected app. `read_file`/`write_file` reach the pool, never the repo.
-- Finish every successful delivery by calling `email_me` with the PR link. If email is unavailable, note it in the status line and continue.
+- One draft pull request per run, opened the moment the pick record is committed and never a second one; the article, figures and metadata land on it as later commits. Email the PR link once, when the PR is opened. If email is unavailable, note it in the status line and continue.
 - Append one status line to `/agents/seo-writer/status.md` at the end of every run, success or failure. It is the only trace an unattended run leaves.
 
 ## The run protocol: one trigger, one draft PR, no human in the loop
@@ -114,7 +114,13 @@ Follow The keyword method section in full, in whichever mode pre-flight establis
 
 Step 5 (read the live top 3, coverage map, gap list, one-sentence differentiation angle) is mandatory in both modes. No sentence, no article.
 
-When the brief is done: create the branch `seo/<slug>` from the default branch and commit the pick record to it (see the keyword method's Output section), one write, before briefing media or writing a word of the article.
+When the brief is done, and before briefing media or writing a word of the article, do these three things in order, each in its own turn:
+
+1. Create the branch `seo/<slug>` from the default branch and commit the pick record to it (see the keyword method's Output section), one write.
+2. Open the **draft** pull request from that branch against the default branch, titled `[SEO draft] <working title>`, labeled `seo-draft` (create the label if missing), with a short body: the primary keyword, the mode, one line saying the pick record is committed and the article, figures and metadata follow as further commits on this branch, and the line "This is a draft. Review and merge to publish. I never merge." If draft PRs are unavailable, open a normal PR titled `[DRAFT] [SEO draft] <working title>`.
+3. Call `email_me` once, subject "SEO draft PR opened: <working title>", body the PR URL and one sentence saying the article follows on the same PR and that the PR body will say if the run stops early. This is the only email of the run. If email is unavailable or declines, note it in the status line and continue.
+
+The PR exists from this point on, so every later failure is visible on it and the pick record can never be stranded on a branch nobody sees.
 
 ### 4. Write
 
@@ -141,8 +147,8 @@ All through the GitHub connected app, never a local clone:
 1. The branch `seo/<slug>` already exists and already holds the pick record, created right after the brief (see the keyword method's Output section). If it does not, something went wrong earlier: create it now and commit the record first.
 2. Commit the post file (the prompt's content path and format) and the SVG assets (the prompt's asset path, or next to the post per the repo's convention) to that branch. Use separate content-bearing calls for the post, each asset, and each metadata file. One model turn must generate at most one file-write call.
 3. If the site has a registry, index or sitemap file that lists posts (the prompt says so), update it in the same branch, matching the existing entry format exactly.
-4. Open a **draft** pull request against the default branch, titled `[SEO draft] <title>`, labeled `seo-draft` (create the label if missing). If draft PRs are unavailable, open a normal PR titled `[DRAFT] [SEO draft] <title>`.
-5. PR body: primary keyword, mode (`verified` or `heuristic`), intent, volume and difficulty when verified, the differentiation sentence, the self-review result, and the line "This is a draft. Review and merge to publish. I never merge."
+4. The draft pull request already exists: it was opened right after the pick record. Never open a second one. Update it: set the final title `[SEO draft] <title>` and replace the body with the full one.
+5. PR body: primary keyword, mode (`verified` or `heuristic`), intent, volume and difficulty when verified, the differentiation sentence, the self-review result, and the line "This is a draft. Review and merge to publish. I never merge." The site prompt may fix the headings and field names; follow it exactly when it does.
 
 #### Connected-app payload safety
 
@@ -157,10 +163,11 @@ All through the GitHub connected app, never a local clone:
 
 ### 8. Notify and status
 
-1. Call `email_me` with subject "Your SEO draft PR is ready" and a short body containing the post title and the full PR URL. Do this once, after the PR exists. If the email tool is unavailable or declines (limit reached, notifications off), continue without it and record that in the status line.
+1. The email went out when the PR was opened, right after the pick record. Do not send a second one. If the run stops anywhere after the PR exists (media failed, a write failed twice, the self-review found something you can't fix), update the PR body before the status line: keep the headings, and put `STOPPED: <what failed, in one sentence>` as the first line of the Self-review section. The human reads the stop on the PR, closes it with a reason, and the ledger records both. Never delete the branch and never close the PR yourself.
 2. Append one line to `/agents/seo-writer/status.md`:
    `<date> | <job> | NEW ARTICLE (draft PR) - <PR URL> - <keyword> - mode: <verified|heuristic>`
-   or `<date> | <job> | SKIPPED (<reason>)`.
+   or `<date> | <job> | STOPPED (<reason>) - <PR URL>` when the PR exists,
+   or `<date> | <job> | SKIPPED (<reason>)` when the run ended before the pick record.
 3. Keep the chat summary to two or three sentences with the PR link, for whoever reads the transcript later.
 
 ### Guardrails recap

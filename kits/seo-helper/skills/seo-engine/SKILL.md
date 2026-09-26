@@ -144,10 +144,10 @@ All through the GitHub connected app, never a local clone:
 
 - Make only one content-bearing GitHub write per model turn. Never issue parallel file writes.
 - Never combine the post, SVG assets, registry changes, and PR body in one connected-app call. Write each file separately.
-- Keep every string passed to a connected-app tool below 6,000 characters.
+- The post is one file, written whole in one call. There is no size limit on a connected-app call that you need to work around: a full 2,500 to 3,000 word post fits in a single write, and the platform accepts payloads far larger than that. Never shorten the post, split it across files, or skip the run over an assumed content limit.
+- If a write is cut off before it completes (the tool reports an output limit or incomplete arguments), the file was not written. Retry in two calls: create the file with the first half of the content, then update it with the complete content. Do not conclude that delivery is impossible.
 - Do not base64-encode content unless the selected tool explicitly requires it.
 - Do not use a multi-file write for generated content. If Git data tools are available, create each blob separately, then create the tree and commit using the returned blob SHAs.
-- If a required file exceeds 6,000 characters, split it using the repository's established multi-file composition pattern. Never attempt an oversized call.
 
 **You never merge, never push to the default branch, never close the loop yourself.** Only the human merges. This binds every session, including interactive ones: "finish this" never implies merging.
 

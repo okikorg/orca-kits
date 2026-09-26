@@ -11,8 +11,11 @@ you. You apply it to the writer's skill, or, if you keep the writer's rules
 as a file in a repo you name in the prompt, the agent opens a draft pull
 request there as well.
 
-The writer is never changed by the agent. Its pull request body is the only
-interface.
+The writer writes the first half of each record at pick time, before the
+article: the keyword, the candidates it weighed, the ones it rejected and why,
+and why the winner won. This agent adds the second half: the pull request,
+merged or closed, the close reason, and ranks. It never changes the writer or
+the writer's half.
 
 ## What is in here
 

@@ -102,7 +102,11 @@ Branch `seo/<slug>`, PR titled `[SEO draft] <title>`, label `seo-draft`, base
 \<branch\>.
 
 Before writing, check for cannibalization against the live sitemap, the content
-folder, and open PRs labelled `seo-draft`.
+folder, and PRs labelled `seo-draft`, open or closed.
+
+Pick records go to `<path/to/picks/><slug>.json` on the branch, written right
+after the brief and before the article. Leave this line out to use the default
+`.orca/seo/picks/`. If you run the seo-ledger kit, give it the same path.
 
 Draft PRs only. A human merges, because merging is publishing. Never merge and
 never push to \<branch\>.

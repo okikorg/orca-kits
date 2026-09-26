@@ -17,8 +17,7 @@ Read the prompt in full before the first tool call. It names:
 
 - **Repo**: `owner/name` and the default branch.
 - **Draft label**: the label the writer puts on its pull requests.
-- **Record folder**: the path under which you write, and the only path you ever commit to on the default branch.
-- **PR body spec**: the headings and field names the writer uses, so you can parse them.
+- **Record folder**: the path where the writer leaves its pick record on each branch, where you complete it on the default branch, and the only path you ever commit to.
 - **Site domain** and the **search settings** for ranking (location, language).
 - **Cadences**: how many days between ranking passes and between reviews, and the minimum number of records with outcomes before a review.
 - **Pool name**, when the agent posts to a shared board.
@@ -26,6 +25,7 @@ Read the prompt in full before the first tool call. It names:
 It may also name, optionally:
 
 - **Rules repo and path**: a repo and file where the writer's keyword rules are kept as text. When present, a review also opens a draft pull request there. When absent, the review stays a record and the human applies it to the writer's skill by hand.
+- **PR body spec**: the headings and field names the writer used in its pull request body before it kept pick records. Only needed to record those older drafts; new drafts carry their record.
 
 If any required item is missing, write `SKIPPED (prompt missing: <items>)` and stop. Never guess a repo or a folder.
 
@@ -39,15 +39,13 @@ Read `<record folder>/_index.json` from the default branch. It holds `recorded` 
 
 ### 1. Outcomes (every run)
 
-1. List pull requests on the repo carrying the draft label, in every state. Use a repository-scoped search such as `GITHUB_FIND_PULL_REQUESTS` with the label and `state: all`.
-2. For each pull request that is not in `recorded`, or is recorded as `open` and is no longer open:
-   - Fetch the pull request: title, body, head branch, created, merged and closed dates, merged flag.
-   - Derive the slug from the head branch by stripping the writer's branch prefix (the prompt says what it is, `seo/` by default).
-   - Parse the body with the PR body spec. Every field the spec names becomes a key. A field that is absent is `null`. A malformed body still produces a record, with `parseWarnings` listing what could not be read.
-   - When the pull request is closed without merge, fetch its comments and take the last comment by a human as `closeReason`. No comment means `null`.
-   - Build the record (schema below) and write it to `<record folder>/<slug>.json` on the default branch with a commit message `seo-ledger: <slug> <outcome>`. One file per write call. If the file exists, read it first and preserve `ranks` and any field you are not updating.
-   - Update `recorded` in the index.
-3. Never touch a pull request: no comments, no labels, no closes.
+The writer keeps a pick record per draft in the record folder on its branch, written before the article. Your job is to complete it, not to reconstruct it.
+
+1. List the record folder on the default branch. Every record there arrived by merge. For each one without an `outcome`, find its pull request with one repository-scoped search for the head branch `seo/<slug>` (the prompt says the prefix; `seo/` by default), then add `pr`, `prUrl`, `outcome: "merged"` and `mergedAt`. One write per record, commit message `seo-ledger: <slug> merged`, preserving every field the writer wrote.
+2. List pull requests carrying the draft label that are closed without merge, with one search. For each whose slug has no file under `<record folder>/closed/`, read `<record folder>/<slug>.json` from the pull request's head commit, which GitHub keeps after the branch is deleted, and write it to `<record folder>/closed/<slug>.json` with `outcome: "closed"`, `closedAt`, and `closeReason` taken from the last comment by a human, or `null` when there is none.
+3. A pull request with no record on its head commit is a draft made before the writer kept records. Only then parse its body with the PR body spec from the prompt, mark the record `"source": "pr-body"`, and list in `parseWarnings` what could not be read. When the prompt has no spec, record the title, dates and outcome and leave the writer's fields `null`.
+4. Open drafts get no record on the default branch until they merge or close. Never touch a pull request: no comments, no labels, no closes.
+5. Update `recorded` in the index with every pull request number you completed.
 
 ### 2. Ranks (when `lastRanksAt` is older than the ranking cadence)
 
@@ -79,35 +77,37 @@ If DataForSEO is not connected or fails twice in a row, skip this whole step and
 
 ## The record schema
 
+The writer writes the first half at pick time and you never change it. You add the second half.
+
 ```json
 {
   "schemaVersion": 1,
-  "slug": "<from the branch>",
+  "slug": "<slug>",
+  "pickedAt": "2026-09-26",
+  "keyword": "<primary keyword>",
+  "lane": null,
+  "intent": "informational | commercial",
+  "mode": "verified | heuristic",
+  "volume": null,
+  "difficulty": null,
+  "candidates": [{ "keyword": "...", "volume": null, "difficulty": null, "gate": "passed | <gate>", "note": "..." }],
+  "rejected": [{ "keyword": "...", "gate": "<gate>", "why": "..." }],
+  "chosen": { "why": "...", "differentiation": "...", "gap": "..." },
+  "competitors": [{ "url": "...", "covers": "..." }],
+
   "pr": 990,
   "prUrl": "https://github.com/<owner>/<name>/pull/990",
-  "title": "<PR title without the draft prefix>",
-  "createdAt": "2026-09-26",
-  "outcome": "open | merged | closed",
+  "outcome": "merged | closed",
   "mergedAt": null,
   "closedAt": null,
   "closeReason": null,
-  "keyword": "<from the body>",
-  "lane": 4,
-  "mode": "verified | heuristic",
-  "intent": "informational | commercial",
-  "volume": null,
-  "difficulty": null,
-  "differentiation": "<one sentence>",
-  "competitors": [{ "url": "...", "covers": "..." }],
-  "rejected": [{ "keyword": "...", "gate": "..." }],
-  "selfReview": ["..."],
-  "files": ["..."],
   "ranks": [{ "date": "2026-10-03", "position": 14, "url": "..." }],
+  "source": "pick-record | pr-body",
   "parseWarnings": []
 }
 ```
 
-Fields the PR body spec does not name stay `null`. Numbers stay numbers; `n/a` becomes `null`. Dates are `YYYY-MM-DD`.
+Everything above the blank line is the writer's; everything below is yours. A record you had to build from a pull request body carries `"source": "pr-body"` and whatever writer fields the body gave, the rest `null`. Numbers stay numbers; `n/a` becomes `null`. Dates are `YYYY-MM-DD`.
 
 ## Rails
 

@@ -118,6 +118,8 @@ Step 5 (read the live top 3, coverage map, gap list, one-sentence differentiatio
 
 Follow the Writing rules section (blocking checklist), through the site prompt's voice section. Format the piece for the site's blog: the prompt says whether posts are Markdown, MDX or components, what front matter or metadata fields they use, and where they live. Match the existing posts' conventions exactly; open one or two recent posts from the repo and mirror their shape rather than trusting the prompt alone.
 
+You write the post yourself, in your own turn, as the content argument of the GitHub write call that delivers it. Never delegate the article, or any part of it, to another agent: `delegate_run` exists for the media agent and nothing else. A post drafted in another run comes back as a tool result that is cut at a fixed size, so it cannot be delivered whole, and a run that reads its own article back through the pool has already failed. A full post fits in one write; the platform accepts it.
+
 ### 5. Media
 
 Follow the Media method section:

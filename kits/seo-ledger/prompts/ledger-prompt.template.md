@@ -20,12 +20,17 @@ label `<seo-draft>` and come from branches named `<seo/><slug>`.
 
 ## Record folder
 
-Write records under `<path/to/picks/>` on the default branch. That folder is
-the only place you commit to. The index lives at `<path/to/picks/>_index.json`.
+The writer writes its pick record to `<path/to/picks/><slug>.json` on each
+branch, before the article. Read that folder on the default branch first and
+complete what is there. It is the only place you commit to. The index lives
+at `<path/to/picks/>_index.json`. Use the same path in the writer's site
+prompt; when neither prompt names one, both agents use `.orca/seo/picks/`.
 
-## PR body spec
+## PR body spec (optional)
 
-The writer's pull request body uses these headings and fields, in this order:
+Only needed for drafts opened before the writer kept pick records. Leave it
+out when every draft has one. The writer's pull request body used these
+headings and fields, in this order:
 
 ```
 ## SEO draft

@@ -373,7 +373,7 @@ The pick record is the same reasoning as data, written for whoever reads the led
 }
 ```
 
-The record has three blocks, each with one owner. `pick` is yours, written once here and never edited after. `review` is the human's: you write it empty, exactly as above, so the reviewer only fills blanks. `ledger` belongs to the ledger agent, which adds it after the pick PR merges; never write it. `candidates` holds every keyword you weighed, `rejected` the ones you dropped and the gate that dropped them, `chosen` why the winner won. `lane` is the prompt's lane number when the prompt has lanes, else `null`. `draftBranch` is the branch the draft PR will come from, known before it exists; the ledger finds the draft through it. Unknown numbers are `null`, never a guess.
+The record has two blocks, each with one owner. `pick` is yours, written once here and never edited after. `review` is the human's: you write it empty, exactly as above, so the reviewer only fills blanks. The ledger agent keeps its own file beside the record, at `<record folder>/ledger/<slug>.json`, after the pick PR merges; never write anything under `ledger/`, and never add a `ledger` key to a record. `candidates` holds every keyword you weighed, `rejected` the ones you dropped and the gate that dropped them, `chosen` why the winner won. `lane` is the prompt's lane number when the prompt has lanes, else `null`. `draftBranch` is the branch the draft PR will come from, known before it exists; the ledger finds the draft through it. Unknown numbers are `null`, never a guess.
 
 ## Writing rules: the blocking standard for every piece
 

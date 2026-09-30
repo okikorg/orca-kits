@@ -8,7 +8,10 @@ workerMode: sandbox
 # blocks word for word; gpt-5.6-luna paraphrased prose inside them on
 # 2026-09-30 and the read-back check stopped the run. Sonnet copies text
 # faithfully, so the ledger runs on it even though the writer stays cheaper.
-model: openrouter:anthropic/claude-sonnet-4.6
+# Native Anthropic rather than OpenRouter: a run carries about 1M cached
+# tokens of context, and OpenRouter's in-flight credit check refused that
+# on 2026-09-30 (HTTP 402) while the direct key served it.
+model: anthropic:claude-sonnet-4-6
 tools:
   - "@default"
   - "@orchestration"

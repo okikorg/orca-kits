@@ -1,7 +1,9 @@
 # Example site prompt: orcapods.ai
 
 A filled-in example of `site-prompt.template.md`, from a site this workflow runs
-against in production. Use it to see the level of detail that pays off, then
+against in production. It is attached next to that site's repo prompt, which
+names `okikorg/orca`, the record folder `landing/seo/picks/` and the
+`seo-pick/` and `seo-draft/` branches. Use it to see the level of detail that pays off, then
 write your own. Do not attach this one: it will send your run at someone else's
 repo.
 
@@ -16,28 +18,29 @@ supplied input for this run; do not ask me to repeat them in the run message.
 Write and deliver one SEO post, following your seo-engine skill and its run
 protocol. Pick the keyword yourself from the lanes below unless I name a topic.
 
-## Domain and repo
+## Post layout
 
-Domain: orcapods.ai. Repo: okikorg/orca, base branch main.
+Domain orcapods.ai, repo okikorg/orca (see the repo prompt).
 
 Posts are **not Markdown or MDX**. The blog is a Vite React multi-page app and
-each post is a TSX component. Everything lives under `landing/`. Adding a post is
-three steps plus assets:
+each post is a TSX component. **A post is one new folder,
+`landing/src/blog/posts/<slug>/`**, which the build finds on its own. Never
+edit an existing file; there are no append-only files on this site.
 
-1. A `BlogPostMeta` record in `landing/src/blog/posts.ts`. SEO posts must set
+1. `meta.ts`, committed first, relative imports only: `export const post:
+   BlogPostMeta` with `slug` and `href` matching the folder (SEO posts set
    `featured: false`, `category: 'Technical'`, `heroVersion: 1`, and both
-   `heroBarLabel` and `heroBarTag` written for the post.
-2. The article component at `landing/src/blog/<slug>.tsx`, built with
-   `BlogArticleTemplate`, including TOC, FAQ JSON-LD and `sourceNote`. Use
-   `BlogFigureLive` and `BlogCodeBlock` for figures.
-3. One registry line in `landing/src/blog/registry.ts`.
+   `heroBarLabel` and `heroBarTag`), and `export const heroCard:
+   BlogHeroCard` for the hero PNG.
+2. `article.tsx`: `import { post } from './meta'`, a default-exported
+   component built with `BlogArticleTemplate`, including TOC, FAQ JSON-LD and
+   `sourceNote`. Use `BlogFigureLive` and `BlogCodeBlock` for figures.
 
-Then put images in `landing/public/blog/` and append the canonical URL to
-`landing/public/sitemap.xml`. `bun run build` from `landing/` must pass.
+Figures go in `landing/public/blog/<slug>-fig-<name>.svg`.
 
 Read `landing/src/blog/README.md` before you start and follow it. **Never
-hand-edit generated per-post HTML or og and title tags.** They are generated from
-`posts.ts`, so an edit there is overwritten on the next build.
+hand-edit generated HTML, the sitemap, or og and title tags.** The build
+writes them from each post's `meta.ts`.
 
 Sitemap: https://orcapods.ai/sitemap.xml
 
@@ -104,13 +107,19 @@ No photoreal or AI stock-style images, ever. Figures are live animated React
 components, real code, or diagram GIFs. Heroes are typographic stat cards at
 **1200x750**, in the style of `landing/public/blog/hero-217kb-5kb.png`.
 
+## Before merge
+
+1. From `landing/`, run `bun run build`. It must pass.
+2. Render the hero from `landing/scripts/blog-hero-cards.html?card=<slug>`
+   at 1200x750 into `landing/public/blog/<slug>-hero.png`, and commit it with
+   the build output.
+3. Check the page at 1440 and 390 wide, no console errors.
+
 ## Delivery
 
-Branch `seo/<slug>`, PR titled `[SEO draft] <title>`, label `seo-draft`, base
-`main`.
+Branches, titles and labels are in the repo prompt. Before writing, check for
+cannibalization against the post folders, the live sitemap and every pick
+record. Another agent also drafts for this repo.
 
-Before writing, check for cannibalization against `posts.ts`, the live sitemap,
-**and** open PRs labelled `seo-draft`. Another agent also drafts for this repo.
-
-Draft PRs only. A human merges, because merging is publishing. Never run
-`gh pr merge` and never push to `main`.
+A human merges, because merging is publishing. Never run `gh pr merge` and
+never push to `main`.

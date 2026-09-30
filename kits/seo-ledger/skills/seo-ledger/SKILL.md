@@ -84,7 +84,7 @@ Your data lives in its own file, `<record folder>/ledger/<slug>.json`, one per r
 
 - Dates are `YYYY-MM-DD`. Numbers stay numbers. Unknown is `null`, never a guess. Every key above is present in every ledger file.
 - A record whose `schemaVersion` is not 2 is not yours to read for outcomes. Leave it alone and list it under Needs you.
-- Older records may still carry a `ledger` key inside the record. It is read-only history. When no ledger file exists for that slug yet, your file starts from those values, and this run's changes go on top. Never edit the record to remove the key; a human does that.
+- Older records may still carry a `ledger` key inside the record. It is read-only history. When no ledger file exists for that slug yet, your file is a copy of that key's values, every one of them unchanged (`status`, the pull request number and URL, every date, every entry of `ranks`, `rankedAt`, `pendingRank`), with any schema key it lacks added as `null`; only then do this run's own changes go on top. Seeding is a copy of values, never a fresh judgement. Never edit the record to remove the key; a human does that.
 
 ## The run protocol
 
@@ -106,7 +106,7 @@ List the record folder on the default branch with `GITHUB_GET_REPOSITORY_CONTENT
    - Closed without merge: `status` `rejected`, `closedAt`; but `not-written` when `review.decision` is `not-written`, because the run stopped before the post existed and nobody judged it.
    - No pull request on that branch: `status` `not-written`.
    A record with no ledger file always gets one, even when its status only restates `review.decision`. A ledger file that exists is rewritten only when a value changed.
-2. **Ranking** when the ledger file holds a `pendingRank`, or when its `status` is `published` and a ranking pass is due for it: `mergedAt` is at least three days ago, and `rankedAt` is null or older than the cadence that applies (the early cadence until the early period after `mergedAt` has passed, the later cadence after). See step 2 for how.
+2. **Ranking** when the ledger file holds a `pendingRank`, or when its `status` is `published` and a ranking pass is due for it: `mergedAt` is at least three days ago, and `rankedAt` is null or older than the cadence that applies (the early cadence until the early period after `mergedAt` has passed, the later cadence after). A record ranked today or within its cadence is not due, whatever tasks exist for its keyword, and is never posted again. See step 2 for how.
 3. **Checks** that write nothing, for the email's Needs you list:
    - `review.decision` is null on a record that reached the default branch: the pick PR merged without its review.
    - `review.decision` disagrees with the ledger file's `status` (for example `rejected` on a draft that merged). `not-written` agrees with a draft that was closed or never opened.
@@ -125,7 +125,7 @@ Search the DataForSEO app once for Google organic SERP tools. When it offers a l
 2. **Post early.** Right after the scan and before the review, post one task per due record that holds no `pendingRank`: `pick.keyword`, the prompt's location and language, depth 100. Never post a task for a record that already has one pending; each task costs money.
 3. **Collect late.** After the review, fetch each task you posted this run once. Ready: record the rank. Still queued: set `pendingRank` to `{ "taskId": "<id>", "postedAt": "<today>" }` so the next run collects it instead of paying again. That is a change to the ledger file and is written like any other.
 
-**Recording a rank:** find the first result whose domain matches the site domain. Append `{ "date": <today>, "position": <n or null>, "url": <matched url or null> }` to the ledger file's `ranks`, and set its `rankedAt` to today. Null means not found in the top 100; never invent a position.
+**Recording a rank:** find the first result whose domain matches the site domain. Append `{ "date": <today>, "position": <n or null>, "url": <matched url or null> }` to the ledger file's `ranks`, and set its `rankedAt` to today. `ranks` only grows: an entry is never removed, replaced or emptied, and `rankedAt` never moves backwards or back to null. A position of `null` is a recorded rank, not a missing one. Null means not found in the top 100; never invent a position.
 
 If DataForSEO is not connected or fails twice in a row, skip this whole step, leave `rankedAt` and `pendingRank` alone so the records stay due, and say so in the status line.
 
@@ -147,7 +147,7 @@ Only when steps 1 to 3 changed at least one file. See Writing to the repo.
 ### 5. Email and status
 
 1. Send one email with `email_me` when any of these is true: a record changed, a review was written, Needs you is not empty, or the run stopped. Otherwise send none. The email is described in The email section.
-2. Append one line to `/agents/seo-ledger/status.md`:
+2. Append one line to `/agents/seo-ledger/status.md` with `write_file` (read it first with `read_file`, then write the old lines plus the new one). That path is on your own file system, reached only through `read_file` and `write_file`. It is never a GitHub path: a status line committed to the repository, at its root or anywhere else, is a write outside `ledger/` and `reviews/`. The line is:
    `<date> | <job> | UPDATED <n> (<m> outcomes, <k> ranks) | REVIEW <reviews/date.md or none> | NEEDS YOU <j> | <ledger PR URL or no writes>`
    or `<date> | <job> | WAITING <open ledger PR URL>`
    or `<date> | <job> | STOPPED (<path>: <error>) - <PR URL>`
@@ -201,7 +201,7 @@ Every call goes through `call_connected_app_tool` with three top-level fields: `
 1. Create the branch `seo-ledger/<date>-<hhmm>` from the default branch, once per run, before any write: `GITHUB_CREATE_BRANCH` with the default branch's head sha (from `GITHUB_GET_A_REFERENCE` on `heads/<default branch>`), then `GITHUB_GET_A_REFERENCE` on `heads/seo-ledger/<date>-<hhmm>` to confirm it exists. No write happens until that read-back returns the branch. `GITHUB_CREATE_OR_UPDATE_FILE_CONTENTS` does not fail when its `branch` does not exist: it falls back to the default branch and commits there, which is the one write you must never make. If a write result ever says it fell back to the default branch, stop at once, make no further write, and say so in the status line, the board post and the email; never try to undo it yourself.
 2. Write to that branch and only that branch, one file per call with `GITHUB_CREATE_OR_UPDATE_FILE_CONTENTS` (`owner`, `repo`, `path`, `branch`, `message`, `content`, plus the current `sha` when the file already exists on that branch). The only paths you write are `<record folder>/ledger/<slug>.json` and `<record folder>/reviews/<date>.md`. The `content` of a ledger file is the whole file, every key from the schema, generated by you; two-space indentation, keys in the schema's order. Never a multi-file write, never a write to the default branch, never a record, never any other path.
 3. After every write, read the path back on the branch with `GITHUB_GET_REPOSITORY_CONTENT` (`ref` set to your branch) and decode it. Parse the JSON and compare every field to what you meant to write: `status`, the pull request number and URL, the dates, every entry in `ranks`, `pendingRank`, `updatedAt`. Whitespace and key order are not differences. For a review file, check that its first and last lines are yours. The write counts only when that check passes; a tool result that says success is not enough. A check that fails is not yet a failed write: read once more, then rewrite the file once, and only a second failed check on the same path stops the run.
-4. Open a pull request from the branch against the default branch, titled `[seo-ledger] <n> records, <date>`, labeled `seo-ledger` (create the label if missing), body one line per path with what changed (`published`, `rejected`, `ranked 14`, `review`). Not a draft.
+4. Open a pull request from the branch against the default branch, titled `[seo-ledger] <n> records, <date>`, body one line per path with what changed (`published`, `rejected`, `ranked 14`, `review`). Not a draft. Then add the label `seo-ledger` to it with `GITHUB_ADD_LABELS_TO_AN_ISSUE` (create the label if missing); the pull request is not done until the label is on it.
 5. Do not merge it. The writes count once every file on the branch passed its read-back and the pull request is open; the email and the status line give its URL, and a human merges it.
 6. If any write fails twice for the same path, stop: leave the branch as it is, write the STOPPED status line, post to the board, and send the stopped email. The default branch is unchanged, so the next run finds the same work due. A human resolves the branch.
 
@@ -213,4 +213,5 @@ Every call goes through `call_connected_app_tool` with three top-level fields: `
 - No memory_save. No site facts in any file outside the prompt.
 - No time budget. A stop names a failed tool call or a missing prompt item, never the clock, and never repeats an earlier run's stop note.
 - The branch comes first. Create it, read it back, and only then write; a write tool given a branch that does not exist commits to the default branch.
+- The status file and the board are on your own file system and the pool tools. Nothing about a run is ever committed to the repository except ledger files and review files.
 - When the prompt gate fails or the connected app is unreachable, stop with a SKIPPED line rather than partial state.

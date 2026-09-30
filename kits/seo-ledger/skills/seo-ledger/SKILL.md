@@ -90,13 +90,13 @@ List the record folder on the default branch, and read every `.json` file in it 
 1. **Outcome** when there is no `ledger` block, or `ledger.status` is `drafting`. Find the draft PR with one repository-scoped search for pull requests, in every state, whose head branch is `pick.draftBranch`.
    - Open: `status` `drafting`, `draftPr` and `draftUrl` set.
    - Merged: `status` `published`, `mergedAt`, and `publishedUrl` from the prompt's URL pattern.
-   - Closed without merge: `status` `rejected`, `closedAt`.
+   - Closed without merge: `status` `rejected`, `closedAt`; but `not-written` when `review.decision` is `not-written`, because the run stopped before the post existed and nobody judged it.
    - No pull request on that branch: `status` `not-written`.
    Write the block only when a value changed.
 2. **Ranking** when `status` is `published` and a ranking pass is due for it: `mergedAt` is at least three days ago, and `rankedAt` is null or older than the cadence that applies (the early cadence until the early period after `mergedAt` has passed, the later cadence after). See step 2 for how.
 3. **Checks** that write nothing, for the email's Needs you list:
    - `review.decision` is null on a record that reached the default branch: the pick PR merged without its review.
-   - `review.decision` disagrees with `ledger.status` (for example `rejected` on a draft that merged).
+   - `review.decision` disagrees with `ledger.status` (for example `rejected` on a draft that merged). `not-written` agrees with a draft that was closed or never opened.
    - `schemaVersion` is not 2.
 4. Anything else: skip it. Most records need nothing on most days.
 

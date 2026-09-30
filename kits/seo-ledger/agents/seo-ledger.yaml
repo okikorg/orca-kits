@@ -4,11 +4,11 @@ runtime: marlin
 # workerMode "sandbox". Leave workerSubstrate/workerImage unset so placement
 # stays fleet-neutral.
 workerMode: sandbox
-# Reading pull request states and rewriting one block of a small JSON record
-# is bounded work with a fixed schema, so it runs on the cheapest id on OpenRouter's allowlist, the
-# same one the writer uses. The schema and the folder boundary are enforced
-# by the skill's rails, not by the model's judgement.
-model: openrouter:openai/gpt-5.6-luna
+# Every write rewrites a whole record and must reproduce the pick and review
+# blocks word for word; gpt-5.6-luna paraphrased prose inside them on
+# 2026-09-30 and the read-back check stopped the run. Sonnet copies text
+# faithfully, so the ledger runs on it even though the writer stays cheaper.
+model: openrouter:anthropic/claude-sonnet-4.6
 tools:
   - "@default"
   - "@orchestration"

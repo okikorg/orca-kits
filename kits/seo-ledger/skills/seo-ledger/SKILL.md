@@ -141,7 +141,7 @@ Only when steps 1 to 3 changed at least one file. See Writing to the repo.
    or `<date> | <job> | SKIPPED (<reason>)`.
    `<n>` counts verified writes only (see Writing to the repo). A write whose tool call failed, or whose read-back did not return the new content, is not counted. Reporting a record you did not verify is the one failure this agent must never have, because every later review trusts the count.
 3. Post to the pool board only when the run stopped.
-4. Before the status line, confirm your `seo-ledger/` branch is deleted. If the delete failed, try once more, and say so in the status line when it still exists.
+4. After a successful merge, and only then, confirm your `seo-ledger/` branch is deleted. If the delete failed, try once more, and say so in the status line when it still exists. A run that stopped never deletes its branch: the branch and its pull request hold the work for a human.
 
 ## The email
 
@@ -183,7 +183,7 @@ Every call goes through `call_connected_app_tool` with three top-level fields: `
 
 1. Create the branch `seo-ledger/<date>-<hhmm>` from the default branch, once per run.
 2. Write to that branch and only that branch, one file per call with `GITHUB_CREATE_OR_UPDATE_FILE_CONTENTS` (`owner`, `repo`, `path`, `branch`, `message`, `content`, plus the current `sha` of the file on that branch). Never a multi-file write, never a write to the default branch, never a path outside the record folder.
-3. After every write, read the path back on the branch. The write counts only when the read returns the new content and the `pick` and `review` blocks are unchanged from the default branch. A tool result that says success is not enough; the read-back is.
+3. After every write, read the path back on the branch with `GITHUB_GET_REPOSITORY_CONTENT` (`ref` set to your branch), decoding its content when it is base64. Never read back through a download link, a raw-content URL or `web_extract`: they reformat text, and a reformatted file looks like a failed write. Compare values, not bytes: parse the JSON, and check that `ledger` holds what you wrote and that `pick` and `review` equal the default branch's. Whitespace and key order are not differences. For a review file, check that its first and last lines are yours. The write counts only when that check passes; a tool result that says success is not enough. A check that fails is not yet a failed write: read once more, then rewrite the file once, and only a second failed check on the same path stops the run.
 4. Open a pull request from the branch against the default branch, titled `[seo-ledger] <n> records, <date>`, labeled `seo-ledger` (create the label if missing), body one line per path with what changed (`published`, `rejected`, `ranked 14`, `review`). Not a draft.
 5. Merge it yourself with the squash method, then read one written path back on the default branch to confirm it landed. Only then do the writes count. Then delete the branch.
 6. If any write fails twice for the same path, or the merge is refused, stop: leave the branch and the pull request as they are, write the STOPPED status line, post to the board, and send the stopped email. The records on the default branch are unchanged, so the next run finds the same work due. A human resolves the open pull request.

@@ -4,14 +4,12 @@ runtime: marlin
 # workerMode "sandbox". Leave workerSubstrate/workerImage unset so placement
 # stays fleet-neutral.
 workerMode: sandbox
-# Every write rewrites a whole record and must reproduce the pick and review
-# blocks word for word; gpt-5.6-luna paraphrased prose inside them on
-# 2026-09-30 and the read-back check stopped the run. Sonnet copies text
-# faithfully, so the ledger runs on it even though the writer stays cheaper.
-# Native Anthropic rather than OpenRouter: a run carries about 1M cached
-# tokens of context, and OpenRouter's in-flight credit check refused that
-# on 2026-09-30 (HTTP 402) while the direct key served it.
-model: anthropic:claude-sonnet-4-6
+# Reading pull request states and rewriting one block of a small JSON record
+# is bounded work with a fixed schema, so it runs on the cheapest id on
+# OpenRouter's allowlist, the same one the writer uses. A Sonnet run on
+# 2026-09-30 cost $26.87 against luna's $0.16; the model stays here and the
+# skill's write path is what keeps records intact.
+model: openrouter:openai/gpt-5.6-luna
 tools:
   - "@default"
   - "@orchestration"

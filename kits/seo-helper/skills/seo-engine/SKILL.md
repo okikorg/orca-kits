@@ -120,7 +120,9 @@ When the brief is done, and before briefing media or writing a word of the artic
 1. Create the pick branch from the default branch and commit the pick record to it (see the keyword method's Output section), one write. Open the pick PR from it with the pick body.
 2. Create the draft branch from the default branch, never from the pick branch. Commit the post's first file to it: the metadata file when the site keeps metadata apart from the article, otherwise the article itself, written whole. Open the draft PR from it as a GitHub draft.
 3. Update the pick PR body so its steps link the draft PR.
-4. Send the one email of the run (see One email).
+4. Call `email_me` now, before any other write (see One email). This is a gate: no article, figure or other file is written until `email_me` has been called. If it fails, note it for the status line and continue.
+
+The slug must be new. If `<record folder>/<slug>.json` already exists on the default branch, or the pick or draft branch already exists, choose a different slug before step 1.
 
 From this point both pull requests exist, so every later failure is visible on them, and the pick record can never be stranded on a branch nobody sees. If a step above fails, stop as step 8 says; a pick PR without a draft PR is a valid outcome with its own steps for the human.
 
@@ -154,23 +156,26 @@ All through the GitHub connected app, never a local clone:
 
 #### Connected-app payload safety
 
+- Every call goes through `call_connected_app_tool` with three top-level fields: `app` (`composio-github`), `name` (the GitHub tool, for example `GITHUB_COMMIT_MULTIPLE_FILES`), and `arguments` (the tool's own fields). `name` is never inside `arguments` and never left out, however large the content. If the tool answers `app and name are required`, the call never reached GitHub and nothing was written: it is a malformed call, not an ambiguous result. Resend the same content with `name` at the top level. This error never counts as a failure and is never a reason to stop.
+- A write that reached GitHub and failed is retried once. Stop only when the same file has failed twice for any other reason.
 - Make only one content-bearing GitHub write per model turn. Never issue parallel file writes.
 - Never combine the post, SVG assets, registry changes, and PR body in one connected-app call. Write each file separately.
 - The post is one file, written whole in one call. There is no size limit on a connected-app call that you need to work around: a full 2,500 to 3,000 word post fits in a single write, and the platform accepts payloads far larger than that. Never shorten the post, split it across files, or skip the run over an assumed content limit.
 - If a write is cut off before it completes (the tool reports an output limit or incomplete arguments), the file was not written. Retry in two calls: create the file with the first half of the content, then update it with the complete content. Do not conclude that delivery is impossible.
 - Do not base64-encode content unless the selected tool explicitly requires it.
-- Do not use a multi-file write for generated content. If Git data tools are available, create each blob separately, then create the tree and commit using the returned blob SHAs.
+- One file per call. `GITHUB_COMMIT_MULTIPLE_FILES` with exactly one entry in `upserts` for a new path is the normal write; never put two files in one call, and never point it at a path that exists on the default branch, because it replaces whole files.
 
 **You never merge, never push to the default branch, never close the loop yourself.** Only the human merges. This binds every session, including interactive ones: "finish this" never implies merging.
 
 ### 8. Notify and status
 
-1. The one email went out when the draft PR opened. Do not send a second one. If the run stops anywhere after that (media failed, a write failed twice, the self-review found something you can't fix), put `STOPPED: <what failed, in one sentence>` as the first line of the draft PR's Self-review section. If it stops after the pick PR but before the draft PR, switch the pick PR body to its not-written steps and send the email then, with the pick PR link and the reason. The human reads the stop on the PRs and follows the steps; the ledger records the outcome. Never delete a branch and never close a PR yourself.
+1. The one email went out when the draft PR opened, before any post file. Do not send a second one. If the run stops anywhere after that (media failed, a write failed twice, the self-review found something you can't fix), put `STOPPED: <what failed, in one sentence>` as the first line of the draft PR's Self-review section. If it stops after the pick PR but before the draft PR, switch the pick PR body to its not-written steps and send the email then, with the pick PR link and the reason. The human reads the stop on the PRs and follows the steps; the ledger records the outcome. Never delete a branch and never close a PR yourself.
 2. Append one line to `/agents/seo-writer/status.md`:
    `<date> | <job> | NEW DRAFT - pick <pick PR URL> - draft <draft PR URL> - <keyword> - mode: <verified|heuristic>`
    or `<date> | <job> | STOPPED (<reason>) - pick <pick PR URL>[ - draft <draft PR URL>]` when a PR exists,
    or `<date> | <job> | SKIPPED (<reason>)` when the run ended before the pick PR.
 3. Keep the chat summary to two or three sentences with both PR links, for whoever reads the transcript later.
+4. **Closing check, every run that opened a PR, success or stop.** Read both PR bodies back and fix whatever is missing before the status line: the pick PR's steps link the draft PR (or carry the not-written steps when there is no draft); the draft PR has its final body, or `STOPPED: <reason>` as the first line of its Self-review; `email_me` was called. Put `EMAIL sent` or `EMAIL failed (<why>)` at the end of the status line. A run that stops and leaves a PR body saying work is still coming has left the human a wrong instruction.
 
 ### Guardrails recap
 
@@ -257,7 +262,7 @@ This is a draft. Review and merge to publish. I never merge.
 
 ### Only new files
 
-The draft branch only adds files. Every path the post needs (the article, its metadata, figures, a hero card) is a file that does not exist on the default branch. Never modify, rewrite or delete an existing file, and never use a multi-file write, which replaces whole files. A post that must be listed somewhere is listed by the site's build, not by you.
+The draft branch only adds files. Every path the post needs (the article, its metadata, figures, a hero card) is a file that does not exist on the default branch. Never modify, rewrite or delete an existing file, and never write more than one file per call (see Connected-app payload safety). A post that must be listed somewhere is listed by the site's build, not by you.
 
 The one exception is a file the prompt names as **append-only**, for a site whose build cannot find posts on its own. For each one: read it from the default branch, add your entry in the existing format without changing any other line, write it back in one call, then compare the draft branch with the default branch and confirm the file shows added lines and zero deleted lines. If it shows any deleted line, write the default branch's content back to the file on the draft branch and stop as step 8 says. Never write a file the prompt does not name this way.
 

@@ -47,3 +47,8 @@ that repo changing only that section.
 ## Pool
 
 Pool name: `<seo-pod>`. Post to its board only when a run stopped.
+
+## Style (optional)
+
+\<House rules for everything the ledger writes: records, reviews, pull
+request bodies and the email. For example: "No em dashes."\>

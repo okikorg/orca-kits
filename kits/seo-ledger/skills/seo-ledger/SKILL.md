@@ -69,6 +69,7 @@ One JSON file per pick, `<record folder>/<slug>.json`, in three blocks. Each blo
     "publishedUrl": null,
     "rankedAt": null,
     "ranks": [{ "date": "2026-10-03", "position": 14, "url": "..." }],
+    "pendingRank": null,
     "updatedAt": "2026-09-30"
   }
 }
@@ -92,8 +93,8 @@ List the record folder on the default branch, and read every `.json` file in it 
    - Merged: `status` `published`, `mergedAt`, and `publishedUrl` from the prompt's URL pattern.
    - Closed without merge: `status` `rejected`, `closedAt`; but `not-written` when `review.decision` is `not-written`, because the run stopped before the post existed and nobody judged it.
    - No pull request on that branch: `status` `not-written`.
-   Write the block only when a value changed.
-2. **Ranking** when `status` is `published` and a ranking pass is due for it: `mergedAt` is at least three days ago, and `rankedAt` is null or older than the cadence that applies (the early cadence until the early period after `mergedAt` has passed, the later cadence after). See step 2 for how.
+   A record with no `ledger` block always gets one, even when its status only restates `review.decision`. A record that already has one is rewritten only when a value changed.
+2. **Ranking** when the record holds `ledger.pendingRank`, or when `status` is `published` and a ranking pass is due for it: `mergedAt` is at least three days ago, and `rankedAt` is null or older than the cadence that applies (the early cadence until the early period after `mergedAt` has passed, the later cadence after). See step 2 for how.
 3. **Checks** that write nothing, for the email's Needs you list:
    - `review.decision` is null on a record that reached the default branch: the pick PR merged without its review.
    - `review.decision` disagrees with `ledger.status` (for example `rejected` on a draft that merged). `not-written` agrees with a draft that was closed or never opened.
@@ -102,26 +103,30 @@ List the record folder on the default branch, and read every `.json` file in it 
 
 Then list the open pull requests whose head branch starts with the pick branch prefix. A pick PR open exactly as many days as the reminder cadence goes under Needs you, once, on that day. Never comment on, label, close or merge a pull request other than your own.
 
-### 2. Ranks (only for the records step 1 marked due)
+### 2. Ranks (only for the records step 1 marked)
 
-If no record is due, make no DataForSEO call. Say `RANKS none due` in the status line and move on.
+If no record is due and none holds `ledger.pendingRank`, make no DataForSEO call. Say `RANKS none due` in the status line and move on.
 
-For each due record:
+Search the DataForSEO app once for Google organic SERP tools. When it offers a live endpoint, query and read each result in the same call and go straight to Recording a rank. When it offers only a task-post and task-get pair, a result can take longer than one run, so ranking spans runs and a posted task is never thrown away:
 
-1. Search the DataForSEO app for a Google organic SERP tool, preferring a live endpoint; fall back to a task-post plus task-get pair and poll at most three times.
-2. Query `pick.keyword` with the prompt's location and language, top 100 results.
-3. Find the first result whose domain matches the site domain. Append `{ "date": <today>, "position": <n or null>, "url": <matched url or null> }` to `ledger.ranks`, and set `ledger.rankedAt` to today. Null means not found in the top 100; never invent a position.
+1. **Collect first.** For each record holding `ledger.pendingRank`, fetch that task by its id. Ready: record the rank and set `pendingRank` to null. Still queued and posted less than 3 days ago: leave it. Older than that: set `pendingRank` to null, so the record is due again.
+2. **Post early.** Right after the scan and before the review, post one task per due record that holds no `pendingRank`: `pick.keyword`, the prompt's location and language, depth 100. Never post a task for a record that already has one pending; each task costs money.
+3. **Collect late.** After the review, fetch each task you posted this run once. Ready: record the rank. Still queued: set `ledger.pendingRank` to `{ "taskId": "<id>", "postedAt": "<today>" }` so the next run collects it instead of paying again. That is a change to the record and is written like any other.
 
-If DataForSEO is not connected or fails twice in a row, skip this whole step, leave `rankedAt` alone so the records stay due, and say so in the status line.
+**Recording a rank:** find the first result whose domain matches the site domain. Append `{ "date": <today>, "position": <n or null>, "url": <matched url or null> }` to `ledger.ranks`, and set `ledger.rankedAt` to today. Null means not found in the top 100; never invent a position.
+
+If DataForSEO is not connected or fails twice in a row, skip this whole step, leave `rankedAt` and `pendingRank` alone so the records stay due, and say so in the status line.
 
 ### 3. Review (when due)
 
 A review is due when the newest file in `<record folder>/reviews/` is older than the review cadence, or there is none, and at least the prompt's minimum number of records have `ledger.status` `published` or `rejected`.
 
-1. Group the decided records: published and ranking in the top 20 at their latest rank, published and not ranking, rejected. Records still drafting or not-written are counted but not compared.
-2. Compare the groups on what the writer knew at pick time: lane, intent, mode, volume and difficulty when present, the rejected keywords and their gates, the differentiation sentence, and `review.reason` and `review.verdict`. Count `review.changes[].area` across records: an area that recurs is a rule the writer keeps breaking, and its `rule` text is the wording to propose. Look for rules the evidence supports: a lane that is rejected more than published, a difficulty band that never ranks, a gate that rejected keywords which later ranked for someone else, a reason that repeats.
-3. Write the review to `<record folder>/reviews/<date>.md`, through your pull request like every other write. It has three parts: the groups and their counts; each proposed rule change as the exact wording to add, change or remove, with the record slugs that support it; and what the records cannot yet tell (too few rejections, no ranks older than a month). If the evidence supports no change, say so in one paragraph.
-4. Only when the prompt names a rules repo and path, and the review proposes a change: also open a draft pull request there that applies the proposed wording to the named section and nothing else, titled `[seo-ledger] Keyword rule proposals from <n> records`, its body the review. Never merge it.
+1. Read the writer's current rules first: the rules repo file and section when the prompt names one. A proposal the rules already state is dropped, not repeated; the review is about what should change.
+2. Group the decided records: published and ranking in the top 20 at their latest rank, published and not ranking, rejected. Records still drafting or not-written are counted but not compared. A record whose `review.verdict` is null was never judged by a human (a draft closed in a cleanup, or merged without notes): count it in its group, but never cite it as evidence.
+3. Compare the groups on what the writer knew at pick time: lane, intent, mode, volume and difficulty when present, the rejected keywords and their gates, the differentiation sentence, and `review.reason` and `review.verdict`. Count `review.changes[].area` across records: an area that recurs is a rule the writer keeps breaking, and its `rule` text is the wording to propose. Look for rules the evidence supports: a lane that is rejected more than published, a difficulty band that never ranks, a gate that rejected keywords which later ranked for someone else, a reason that repeats.
+   When you cite a `review.reason`, quote it word for word. Never summarise a reason into something it does not say. Every proposal cites at least two judged records; with fewer, it goes under what the records cannot yet tell.
+4. Write the review to `<record folder>/reviews/<date>.md`, through your pull request like every other write. It has three parts: the groups and their counts; each proposed rule change as the exact wording to add, change or remove, with the record slugs that support it; and what the records cannot yet tell (too few rejections, no ranks older than a month). If the evidence supports no change, say so in one paragraph.
+5. When the prompt names a rules repo and path and the review proposes at least one change, open a draft pull request there. This is required, not optional. It applies the proposed wording to the named section and nothing else, is titled `[seo-ledger] Keyword rule proposals from <n> records`, and its body is the review. Never merge it. The email's Review section gives its URL, or the error when it could not be opened.
 
 ### 4. Write, through your own pull request
 
@@ -136,6 +141,7 @@ Only when steps 1 to 3 changed at least one file. See Writing to the repo.
    or `<date> | <job> | SKIPPED (<reason>)`.
    `<n>` counts verified writes only (see Writing to the repo). A write whose tool call failed, or whose read-back did not return the new content, is not counted. Reporting a record you did not verify is the one failure this agent must never have, because every later review trusts the count.
 3. Post to the pool board only when the run stopped.
+4. Before the status line, confirm your `seo-ledger/` branch is deleted. If the delete failed, try once more, and say so in the status line when it still exists.
 
 ## The email
 

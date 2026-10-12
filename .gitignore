@@ -1,2 +1,7 @@
 .DS_Store
 local/
+node_modules/
+.venv/
+__pycache__/
+.test-*/
+.live-*

@@ -25,7 +25,7 @@ Or open [the kit's page](https://app.orcapods.ai/kits/kit-0AOaC9ybJiz0Fmx5Q) and
 
 Or create the same agent from code with [agent.py](https://github.com/okikorg/orca-kits/blob/main/kits/sonar/agent.py) or [agent.ts](https://github.com/okikorg/orca-kits/blob/main/kits/sonar/agent.ts), which hold Sonar's whole definition.
 
-No credentials to add. The kit's page lists the docs server as a credential, because Orca lists every MCP server a kit uses; it needs none, so skip it.
+No credentials to add.
 
 ## Use it
 

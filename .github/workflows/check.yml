@@ -1,0 +1,49 @@
+name: check
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "17 6 * * *"
+  workflow_dispatch:
+
+jobs:
+  kits:
+    name: kits
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      # The start page's Scout code is checked against kits/scout.
+      - uses: actions/checkout@v5
+        with:
+          repository: okikorg/orca-docs
+          path: .orca-docs
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22.18
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - run: npm ci
+      - run: npx tsc --noEmit
+      - run: python -m pip install -r requirements.txt
+      - run: python -m py_compile kits/*/*.py scripts/*.py
+      - run: python scripts/check.py
+      - run: python scripts/test_check.py
+      - run: python scripts/check_docs_code.py .orca-docs
+
+  published:
+    name: published kits match their folders
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - run: python scripts/check.py --published

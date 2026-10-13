@@ -1,0 +1,5 @@
+{
+  "name": "Sonar",
+  "description": "Answers questions about Orca from the live docs, citing the page each answer comes from.",
+  "author": "Orca"
+}

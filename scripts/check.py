@@ -76,7 +76,23 @@ def check_agent(where, body, problems):
         elif tool["type"] == "function" and not tool.get("name"):
             problems.add(where, f"tools[{i}] function needs a name")
         elif tool["type"] == "mcp":
-            problems.add(where, f"tools[{i}]: remote MCP is blocked on hosted Orca")
+            check_mcp(where, i, tool, problems)
+
+
+# Hosted Orca reaches only the MCP servers its egress policy enables
+# (ORCA_MCP_ALLOWED_ORIGINS). A kit may use one of those, with no credential,
+# so every copy works as it is.
+MCP_SERVERS = {"https://docs.orcapods.ai/mcp"}
+
+
+def check_mcp(where, i, tool, problems):
+    transport = tool.get("transport") or {}
+    if transport.get("type") != "http" or transport.get("server_url") not in MCP_SERVERS:
+        problems.add(where, f"tools[{i}]: remote MCP is blocked on hosted Orca, except {sorted(MCP_SERVERS)}")
+    if transport.get("headers") or tool.get("credential_id"):
+        problems.add(where, f"tools[{i}]: an MCP tool in a kit takes no credential or headers")
+    if not tool.get("allowed_tools"):
+        problems.add(where, f"tools[{i}]: name the MCP tools the agent may call in allowed_tools")
 
 
 def check_template(where, body, skill_names, problems):

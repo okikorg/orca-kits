@@ -9,7 +9,7 @@ New to Orca? Start at [docs.orcapods.ai/start-here](https://docs.orcapods.ai/sta
 | Kit | What it does | Code on your side |
 | --- | --- | --- |
 | [Scout](kits/scout/) | Researches a question on the web and answers with its sources | None |
-| [Sonar](kits/sonar/) | Answers questions about Orca from docs.orcapods.ai, citing each page | None |
+| [Sonar](kits/sonar/) | Answers questions about Orca from its docs, through the docs' MCP server, citing each page | None |
 
 Each folder's README says what the kit does, what it uses, and how to add and run it.
 

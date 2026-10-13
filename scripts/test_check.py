@@ -69,6 +69,18 @@ CASES = {
         ),
         "remote MCP is blocked",
     ),
+    "MCP with a credential": (
+        lambda f: both(
+            f,
+            '[{"type": "web_search"}]',
+            '[{"type": "mcp", "server_label": "d", "credential_id": "cred_1", "allowed_tools": ["search_orca"], '
+            '"transport": {"type": "http", "server_url": "https://docs.orcapods.ai/mcp"}}]',
+            "[{ type: 'web_search' }]",
+            "[{ type: 'mcp', server_label: 'd', credential_id: 'cred_1', allowed_tools: ['search_orca'], "
+            "transport: { type: 'http', server_url: 'https://docs.orcapods.ai/mcp' } } as any]",
+        ),
+        "takes no credential",
+    ),
     "skill name differs from its folder": (
         lambda f: add_template(f, "notes", "other", "notes"),
         "matches its folder",

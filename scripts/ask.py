@@ -34,7 +34,13 @@ def main(argv):
                     for _ in stream:
                         pass
                 items = list(reversed(agents.sessions.items.list(session.id, limit=50).data))
-                searches = [getattr(getattr(i, "action", None), "query", None) for i in items if i.type == "web_search_call"]
+                searches = [
+                    getattr(getattr(i, "action", None), "query", None)
+                    if i.type == "web_search_call"
+                    else f"{i.name} {i.arguments}"
+                    for i in items
+                    if i.type in ("web_search_call", "mcp_call")
+                ]
                 answer = "\n".join(
                     part.text
                     for i in items
@@ -42,7 +48,7 @@ def main(argv):
                     for part in (i.content or [])
                     if getattr(part, "text", None)
                 )
-                print(f"\n### {question}\nsearches: {searches}\n{answer}", flush=True)
+                print(f"\n### {question}\ntools: {searches}\n{answer}", flush=True)
             finally:
                 agents.sessions.delete(session.id)
     finally:

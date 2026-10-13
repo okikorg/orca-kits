@@ -3,13 +3,15 @@
     ORCA_KITS_API_KEY=... python scripts/publish.py <slug> [--draft] [--allow-new] [--first]
 
 1. Refuses a dirty tree, or a HEAD not on origin/main (unless --first, the
-   kit's first publish from its pull request). Runs check.py on the folder.
+   kit's first publish from its pull request), so what is published is what
+   was reviewed on main. Runs check.py on the folder.
 2. Updates each resource by the id in published.json, from the Python
    definitions: the agent, each skill (a new default version) and the
    template. A resource with no id is created only with --allow-new, and its
    id written to published.json at once, so a new id always lands in a PR.
-3. Creates the kit the first time, then sets its words, its selection and
-   its README, with a last line naming the commit it was published from.
+3. Creates the kit the first time, then sets its words, its selection, its
+   README as written, and its source: the link to its folder on main, which
+   the kit's page shows as a GitHub icon.
 4. Publishes the next version, unless --draft, and prints its link.
 
 The API mints a kit's public id on its first publish. To keep an existing
@@ -80,7 +82,7 @@ def main(argv):
     origin = os.environ.get("ORCA_ORIGIN", "https://api.orcapods.ai")
 
     if kitlib.git("status", "--porcelain"):
-        fail("the tree has uncommitted changes; a version always names a commit")
+        fail("the tree has uncommitted changes; publish only what is committed and reviewed")
     commit = kitlib.git("rev-parse", "HEAD")
     if "--first" not in flags:
         kitlib.git("fetch", "--quiet", "origin", "main")
@@ -142,7 +144,8 @@ def main(argv):
     words = kitlib.words(folder)
     kit_body = {
         **words,
-        "readme": (folder / "README.md").read_text().rstrip() + kitlib.footer(commit, folder),
+        "readme": (folder / "README.md").read_text().rstrip(),
+        "source": f"https://github.com/okikorg/orca-kits/tree/main/kits/{folder.name}",
         "selection": {
             "agents": [ids["agent"]],
             "skills": [skill_ids[s.name] for s in kitlib.skill_dirs(folder)],

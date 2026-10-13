@@ -106,8 +106,38 @@ CASES = {
         "names an amount",
     ),
     "relative link in the README": (
-        lambda f: edit(f, "README.md", "](https://github.com/okikorg/orca-kits/blob/main/kits/scout/agent.py)", "](agent.py)"),
+        lambda f: edit(f, "README.md", "](https://docs.orcapods.ai/start-here)", "](start-here)"),
         "is relative",
+    ),
+    "another heading in the README": (
+        lambda f: edit(f, "README.md", "## Use it", "## Make it yours\n\nChange it.\n\n## Use it"),
+        "exactly the sections",
+    ),
+    "a section missing from the README": (
+        lambda f: edit(f, "README.md", "## What it uses\n", ""),
+        "exactly the sections",
+    ),
+    "the README's sections out of order": (
+        lambda f: (edit(f, "README.md", "## Add it", "## SWAP"), edit(f, "README.md", "## Use it", "## Add it"), edit(f, "README.md", "## SWAP", "## Use it")),
+        "exactly the sections",
+    ),
+    "a README title that is not the kit's name": (
+        lambda f: edit(f, "README.md", "# Scout\n", "# Scout, the research assistant\n"),
+        "starts with the title line",
+    ),
+    "two paragraphs before What it uses": (
+        lambda f: edit(f, "README.md", "\n\n## What it uses", "\n\nAnother paragraph.\n\n## What it uses"),
+        "one short paragraph",
+    ),
+    "a README over 1,500 bytes": (
+        lambda f: edit(f, "README.md", "It needs no sandbox", "It needs no sandbox" + " at all" * 120 + ". It needs no sandbox"),
+        "at most 1500 bytes",
+    ),
+    "Add it without the kit's own link": (
+        lambda f: (
+            (f / "published.json").write_text(json.dumps({"public_id": "kit-AbCdEfGhIjKlMnOpQ"})),
+        ),
+        "the kit's own link",
     ),
 }
 

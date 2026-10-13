@@ -10,7 +10,7 @@ New to Orca? Start at [docs.orcapods.ai/start-here](https://docs.orcapods.ai/sta
 | --- | --- | --- |
 | [Scout](kits/scout/) | Researches a question on the web and answers with its sources | None |
 
-Each folder's README says what the kit does, what it uses, and how to add and run it.
+Each folder's README says what the kit does, what it uses, and how to add and use it.
 
 ## Add a kit
 
@@ -37,12 +37,24 @@ ORCA_API_KEY=... node --experimental-strip-types kits/scout/agent.ts
 | File | What it is |
 | --- | --- |
 | `kit.json` | The kit's name, description and author |
-| `README.md` | This folder's page, and the README on the kit's page |
+| `README.md` | This folder's page, and the README on the kit's page (below) |
 | `agent.py`, `agent.ts` | The agent, as an `agents.create` call; the two must send the same body |
 | `template.py`, `template.ts` | An environment template, where the kit has skills |
 | `skills/<name>/SKILL.md` | A skill, with any files it refers to |
 | `run.py`, `run.ts` | Only where your code takes part: function tools, git, or files from your machine |
 | `published.json` | The kit's ids in the Orca kits organization, written by `scripts/publish.py` |
+
+### The README
+
+A kit's README is both its folder's page here and its card on the kit's page, so its links are absolute and it holds five sections, in this order, and nothing else:
+
+1. `# <name>`, the kit's name as in `kit.json`.
+2. One short paragraph on what the agent does and how it answers.
+3. `## What it uses`: the model, what else it calls, whether it needs a sandbox, and a link to [pricing](https://orcapods.ai/pricing), never an amount.
+4. `## Add it`: `orca kits copy <the kit's link> --yes`, then "Or click **Get started** on [the kit's page](<the kit's link>)", and a line on credentials if it needs any.
+5. `## Use it`: the one example command.
+
+At most 1,500 bytes. `scripts/check.py` enforces all of this. The kit's page shows a GitHub icon linking to the kit's folder here; `scripts/publish.py` sets that link on every publish, so the README carries no line about where it was published from.
 
 ## Checks
 
@@ -55,8 +67,6 @@ python scripts/check.py                           # the kit contract, Python and
 python scripts/test_check.py                      # the check fails on each shape the server refuses
 python scripts/check_docs_code.py ../orca-docs    # the start page's Scout code equals kits/scout
 ```
-
-`python scripts/check.py --published` compares each published kit with its folder, and runs daily.
 
 ## Publishing
 

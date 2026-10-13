@@ -87,25 +87,3 @@ def git(*args, check=True):
     if check and result.returncode != 0:
         raise RuntimeError(f"git {' '.join(args)}: {result.stderr.strip()}")
     return result.stdout.strip()
-
-
-def source_files(commit, folder):
-    """The folder's files at a commit, as (path, blob) pairs, without
-    published.json, which publishing itself writes."""
-    listing = git("ls-tree", "-r", commit, "--", f"kits/{folder.name}", check=False)
-    pairs = []
-    for line in listing.splitlines():
-        meta, path = line.split("\t", 1)
-        if not path.endswith("/published.json"):
-            pairs.append((path, meta.split()[2]))
-    return pairs
-
-
-FOOTER_PREFIX = "Published from [okikorg/orca-kits at "
-
-
-def footer(commit, folder):
-    return (
-        f"\n\n---\n\n{FOOTER_PREFIX}`{commit[:7]}`]"
-        f"(https://github.com/okikorg/orca-kits/tree/{commit}/kits/{folder.name})."
-    )

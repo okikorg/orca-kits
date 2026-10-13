@@ -3,21 +3,21 @@ words.
 
     python scripts/check.py              every kit, and every file's words
     python scripts/check.py scout        one kit
-    python scripts/check.py --published  each published kit matches its folder
 
 The kit rules mirror orca-agent-server main@46db784: src/kits/mod.rs
 (selection, manifest, templates), src/api/validation.rs (agent fields, tools)
 and src/api/templates.rs (template fields). The bodies themselves are typed
 by the pinned openai packages (tsc), and the Python and TypeScript bodies
 must be equal.
+
+A kit's README is also its card on the kit's page (orca-design kits-teams
+D5.2, amended 2026-10-13), so it holds five sections and no more: the title,
+a short description, What it uses, Add it and Use it, in at most 1,500 bytes.
 """
 
 import json
-import pathlib
 import re
 import sys
-import urllib.error
-import urllib.request
 
 import kitlib
 
@@ -25,7 +25,9 @@ AGENT_FIELDS = {"model", "instructions", "name", "metadata", "multi_agent", "rea
 TOOL_TYPES = {"function", "tool_search", "programmatic_tool_calling", "web_search", "mcp"}
 TEMPLATE_FIELDS = {"name", "capability_directories", "env", "files", "network", "packages", "plugins", "setup_commands", "skills"}
 WORD_FIELDS = {"name": 100, "description": 1000, "author": 100}
-README_MAX = 100_000
+README_MAX = 1_500
+SECTIONS = ["## What it uses", "## Add it", "## Use it"]
+KIT_LINK = "https://app.orcapods.ai/kits/"
 MAX_PER_KIND = 50
 MODEL = "orca/openrouter/openai/gpt-5.6-luna"
 SKILL_NAME = re.compile(r"^[A-Za-z0-9_-]+$")
@@ -36,7 +38,6 @@ LINK = re.compile(r"\]\(([^)\s]+)")
 # Phrases that only the coding-agent prompt uses. The prompt lives on
 # docs.orcapods.ai/start-here; everything else links to it.
 PROMPT_PHRASES = ("Set me up on Orca", "Onboard me to Orca")
-PUBLIC_API = "https://api.orcapods.ai/api/public/kits/"
 
 
 class Problems(list):
@@ -121,6 +122,36 @@ def check_skills(folder, problems):
     return names
 
 
+def headings(text):
+    """(line number, heading) for each markdown heading outside fenced code."""
+    found, fenced = [], False
+    for number, line in enumerate(text.splitlines(), 1):
+        if line.startswith("```"):
+            fenced = not fenced
+        elif not fenced and re.match(r"^#{1,6}\s", line):
+            found.append((number, line.strip()))
+    return found
+
+
+def check_sections(where, text, name, public_id, problems):
+    """The title, one short paragraph, then What it uses, Add it and Use it."""
+    found = headings(text)
+    if not found or found[0] != (1, f"# {name}"):
+        problems.add(where, f"starts with the title line \"# {name}\", the kit's name in kit.json")
+    rest = [heading for _, heading in found[1:]]
+    if rest != SECTIONS:
+        problems.add(where, f"has exactly the sections {SECTIONS}, in that order, and no other heading; found {rest}")
+        return
+    lines = text.splitlines()
+    starts = {heading: number for number, heading in found}
+    intro = "\n".join(lines[1 : starts[SECTIONS[0]] - 1]).strip()
+    if not intro or "\n\n" in intro or intro.startswith(("-", "*", ">", "```", "|")):
+        problems.add(where, "has one short paragraph between the title and What it uses")
+    add_it = "\n".join(lines[starts["## Add it"] : starts["## Use it"] - 1])
+    if public_id and f"orca kits copy {KIT_LINK}{public_id} --yes" not in add_it:
+        problems.add(where, f"Add it holds `orca kits copy {KIT_LINK}{public_id} --yes`, the kit's own link")
+
+
 def check_readme(folder, problems):
     where = f"kits/{folder.name}/README.md"
     path = folder / "README.md"
@@ -128,14 +159,18 @@ def check_readme(folder, problems):
         problems.add(where, "missing")
         return
     text = path.read_text()
-    # The published README carries a footer with the source commit.
-    if len(text.encode()) > README_MAX - 300:
-        problems.add(where, f"at most {README_MAX - 300} bytes, leaving room for the footer")
+    if len(text.encode()) > README_MAX:
+        problems.add(where, f"at most {README_MAX} bytes, so it fits the kit's card; it has {len(text.encode())}")
     for match in AMOUNT.finditer(text):
         problems.add(where, f"names an amount ({match.group(0)!r}); link to https://orcapods.ai/pricing instead")
     for target in LINK.findall(text):
         if not target.startswith(("https://", "http://", "mailto:", "#")):
             problems.add(where, f"link {target} is relative; the kit's page shows this README too")
+    try:
+        name = kitlib.words(folder).get("name", "")
+    except (OSError, json.JSONDecodeError):
+        name = ""  # check_words reports it
+    check_sections(where, text, name, kitlib.published(folder).get("public_id"), problems)
 
 
 def check_kit(folder, problems):
@@ -188,44 +223,14 @@ def check_repo_words(problems):
             problems.add(name, "copies the coding-agent prompt; link docs.orcapods.ai/start-here#have-your-coding-agent-do-it")
 
 
-def check_published(problems):
-    """Each published kit's source commit has the folder's files as they are now."""
-    for folder in kitlib.kit_dirs():
-        public_id = kitlib.published(folder).get("public_id")
-        if not public_id:
-            continue
-        where = f"kits/{folder.name}"
-        try:
-            with urllib.request.urlopen(PUBLIC_API + public_id, timeout=30) as response:
-                kit = json.load(response)
-        except urllib.error.URLError as error:
-            problems.add(where, f"cannot read {public_id}: {error}")
-            continue
-        last = kit.get("readme", "").rstrip().splitlines()[-1:] or [""]
-        found = re.search(r"/tree/([0-9a-f]{40})/kits/", last[0]) if last[0].startswith(kitlib.FOOTER_PREFIX) else None
-        if not found:
-            problems.add(where, f"version {kit.get('version')} has no source footer; publish it with scripts/publish.py")
-            continue
-        commit = found.group(1)
-        if not kitlib.git("cat-file", "-t", commit, check=False) == "commit":
-            problems.add(where, f"version {kit.get('version')} names {commit[:7]}, which is not in this repository; publish it from main")
-        elif kitlib.source_files(commit, folder) != kitlib.source_files("HEAD", folder):
-            problems.add(where, f"changed since version {kit.get('version')} ({commit[:7]}); publish it")
-        else:
-            print(f"{where}: version {kit.get('version')} matches ({commit[:7]})")
-
-
 def main(argv):
     problems = Problems()
-    if "--published" in argv:
-        check_published(problems)
-    else:
-        names = [a for a in argv if not a.startswith("--")]
-        folders = [kitlib.KITS / n for n in names] if names else kitlib.kit_dirs()
-        for folder in folders:
-            check_kit(folder, problems)
-        if not names:
-            check_repo_words(problems)
+    names = [a for a in argv if not a.startswith("--")]
+    folders = [kitlib.KITS / n for n in names] if names else kitlib.kit_dirs()
+    for folder in folders:
+        check_kit(folder, problems)
+    if not names:
+        check_repo_words(problems)
     for problem in problems:
         print(problem, file=sys.stderr)
     if problems:

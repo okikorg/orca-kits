@@ -15,7 +15,7 @@ Click **Get started** on the kit's page. Or create the same agent from code with
 From the CLI (the dashboard cannot attach a PDF to a chat yet):
 
 ```bash
-orca chat cram-coach "My exam is on 2026-10-23." --file chapter.pdf
+orca chat cram-coach --sandbox --file chapter.pdf "My exam is on 2026-11-20."
 ```
 
-The last line names the session: get the files with `orca sessions artifacts download session_... --all`, then `orca sessions delete session_... --yes`. To make it yours, change its instructions with `orca agents update`, for example the number of cards or the length of a session.
+Then `orca sessions artifacts download session_... --all` saves the files and `orca sessions delete session_... --yes` stops the sandbox. [The guide](https://docs.orcapods.ai/kits/cram-coach) has every step, the Anki import and how to make it yours.

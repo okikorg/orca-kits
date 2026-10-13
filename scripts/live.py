@@ -79,11 +79,11 @@ def page_programs(docs):
 
 
 def main(argv):
-    names = [a for a in argv if not a.startswith("--")]
+    docs = argv[argv.index("--docs") + 1] if "--docs" in argv[:-1] else None
+    names = [a for a in argv if not a.startswith("--") and a != docs]
     if len(names) != 1:
         sys.exit(__doc__)
     folder = kitlib.KITS / names[0]
-    docs = argv[argv.index("--docs") + 1] if "--docs" in argv else None
     public_id = kitlib.published(folder).get("public_id") or sys.exit(f"kits/{folder.name} is not published yet")
     key = os.environ.get("ORCA_PROD_TEST_API_KEY") or sys.exit("set ORCA_PROD_TEST_API_KEY")
     link = f"https://app.orcapods.ai/kits/{public_id}"

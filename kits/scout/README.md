@@ -15,7 +15,15 @@ Model calls on `orca/openrouter/openai/gpt-5.6-luna`, paid from your Orca credit
 
 ## Add it
 
-Choose **Get started** on the kit's page. Or create the same agent from code with [agent.py](https://github.com/okikorg/orca-kits/blob/main/kits/scout/agent.py) or [agent.ts](https://github.com/okikorg/orca-kits/blob/main/kits/scout/agent.ts), which hold Scout's whole definition.
+Copy the kit into your organization from the terminal:
+
+```bash
+orca kits copy https://app.orcapods.ai/kits/kit-tdCEUXGA3NbuIWJJ6 --yes
+```
+
+Or open [the kit's page](https://app.orcapods.ai/kits/kit-tdCEUXGA3NbuIWJJ6) and choose **Get started**.
+
+Or create the same agent from code with [agent.py](https://github.com/okikorg/orca-kits/blob/main/kits/scout/agent.py) or [agent.ts](https://github.com/okikorg/orca-kits/blob/main/kits/scout/agent.ts), which hold Scout's whole definition.
 
 No credentials to add.
 
@@ -30,5 +38,5 @@ Run `orca chat scout` with no question for a back-and-forth conversation. From y
 ## Make it yours
 
 - **Limit the sources.** Give `web_search` an `allowed_domains` list, for example your own docs site.
-- **Change the job.** Copy it under another name and rewrite its instructions with `orca agents update`.
+- **Change the job.** Copy it under another name (`orca kits copy https://app.orcapods.ai/kits/kit-tdCEUXGA3NbuIWJJ6 --name agent-1=reviewer`) and rewrite its instructions with `orca agents update`.
 - **Quote pages exactly.** Orca does not fetch the pages behind the results; add a [function tool](https://docs.orcapods.ai/guides/function-tools) that does, if Scout must quote a page word for word.

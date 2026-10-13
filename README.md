@@ -17,7 +17,7 @@ Each folder's README says what the kit does, what it uses, and how to add and ru
 Copy it into your organization with its link:
 
 ```bash
-orca kits copy https://app.orcapods.ai/kits/kit-... --yes
+orca kits copy https://app.orcapods.ai/kits/kit-tdCEUXGA3NbuIWJJ6 --yes   # Scout
 ```
 
 Or open the link and choose **Get started**. A copy becomes ordinary agents, skills and templates in your organization, with no tie back to the kit. See [kits](https://docs.orcapods.ai/kits).

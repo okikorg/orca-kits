@@ -9,6 +9,7 @@ New to Orca? Start at [docs.orcapods.ai/start-here](https://docs.orcapods.ai/sta
 | Kit | What it does | Code on your side |
 | --- | --- | --- |
 | [Scout](kits/scout/) | Researches a question on the web and answers with its sources | None |
+| [Cram Coach](kits/cram-coach/) | Turns one textbook chapter (a text PDF) and an exam date into a cram plan, Anki flashcards, a practice test and cited answers | None; you attach the PDF with `orca chat --file` |
 
 Each folder's README says what the kit does, what it uses, and how to add and use it.
 

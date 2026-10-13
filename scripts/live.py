@@ -31,6 +31,24 @@ ORIGIN = "https://api.orcapods.ai"
 # What each kit is asked, through `orca chat <agent> <question>`.
 QUESTIONS = {
     "scout": ["What's new in the latest Python release? Cite your sources."],
+    # The questions Sonar was tuned on: each topic, then the same topics in
+    # other words. Check every answer against the docs.
+    "sonar": [
+        "Which models can my Orca agent run on, and who pays for the model calls?",
+        "What happens to a sandbox when my session goes idle? Do I keep paying for it?",
+        "How do I share an agent with someone in another organization?",
+        "How do I connect Orca's MCP server to Claude Code, and what can it do?",
+        "What happens when my Orca credit runs low or runs out?",
+        "What from Orca 1.x ended with Orca 2.0?",
+        "How much does a web search cost on Orca?",
+        "Who pays when my agent uses orca/openrouter models versus my own provider key?",
+        "If I stop talking to my agent for a while, what happens to its sandbox and its files?",
+        "Can I give my agent to a customer who has their own Orca organization?",
+        "Can Claude Code drive my Orca account? How do I set that up?",
+        "My wallet balance is almost zero. What stops working?",
+        "I used pods and memory banks on the old Orca. What do I use now?",
+        "What does machine time cost per hour?",
+    ],
 }
 
 

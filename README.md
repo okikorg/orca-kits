@@ -9,6 +9,7 @@ New to Orca? Start at [docs.orcapods.ai/start-here](https://docs.orcapods.ai/sta
 | Kit | What it does | Code on your side |
 | --- | --- | --- |
 | [Scout](kits/scout/) | Researches a question on the web and answers with its sources | None |
+| [Sonar](kits/sonar/) | Answers questions about Orca from docs.orcapods.ai, citing each page | None |
 
 Each folder's README says what the kit does, what it uses, and how to add and run it.
 
@@ -60,7 +61,7 @@ python scripts/check_docs_code.py ../orca-docs    # the start page's Scout code 
 
 ## Publishing
 
-Kits are published from the Orca kits organization on production by the **publish** workflow, which a maintainer starts with the kit's folder name and approves. Each kit is run live before a release with `scripts/live.py`.
+Kits are published from the Orca kits organization on production by the **publish** workflow, which a maintainer starts with the kit's folder name and approves. Before publishing, `scripts/ask.py` tries a kit's agent from its folder in a test organization; after, `scripts/live.py` copies the published kit and runs it as a new user would. Check every answer against the docs.
 
 ## The 1.x kits
 

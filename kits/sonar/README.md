@@ -15,6 +15,8 @@ Model calls on `orca/openrouter/openai/gpt-5.6-luna`, paid from your Orca credit
 
 Its search reaches only the docs pages the search provider has indexed, so it sometimes finds no page for a question the docs do cover. It then says the docs it could reach do not cover it, and you can read [docs.orcapods.ai](https://docs.orcapods.ai) directly.
 
+Questions about Orca 1.x and what ended with 2.0 are the exception: Sonar's instructions carry a short summary of [Bring your agents to the new Orca](https://docs.orcapods.ai/migration), so it answers those even when the search misses that page.
+
 ## Add it
 
 Copy the kit into your organization from the terminal:

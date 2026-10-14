@@ -1,0 +1,8 @@
+{
+  "question": "What's new in the latest Python release? Cite your sources.",
+  "answer": "The latest stable Python release is **Python 3.15.0**, released **October 9, 2026**. Its major additions include:\n\n- **Explicit lazy imports** with `lazy import`, allowing imports to be deferred until needed.\n- New built-in **`frozendict`** and **`sentinel`** types.\n- **UTF-8 as the default encoding**.\n- **Unpacking in comprehensions**, such as `[*items for items in lists]`.\n- New profiling tools, including a `profiling` package and Tachyon statistical profiler.\n- Improvements to the experimental **JIT compiler** and stable-ABI support for free-threaded builds.\n- Better error-message suggestions and new `.start` package startup configuration files.\n\nSee the official [Python 3.15.0 release page](https://www.python.org/downloads/release/python-3150/) and the full [“What’s New in Python 3.15” documentation](https://docs.python.org/3.15/whatsnew/3.15.html).",
+  "cost_micro_usd": 112030,
+  "model": "orca/openrouter/openai/gpt-5.6-luna",
+  "session": "session_a8c3b4721a40447db1b8cebac39c118a",
+  "asked_on": "2026-10-14"
+}

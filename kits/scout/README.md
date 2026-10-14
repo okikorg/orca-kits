@@ -6,21 +6,19 @@ Scout answers a question in a few short paragraphs. When the answer depends on f
 
 > What's new in the latest Python release? Cite your sources.
 
-The latest **feature release is Python 3.14**, released on **October 7, 2025**. Its biggest changes include:
+The latest stable Python release is **Python 3.15.0**, released **October 9, 2026**. Its major additions include:
 
-- **Deferred evaluation of annotations**, plus the new `annotationlib` module.
-- **Template string literals** (`t"..."`), enabling libraries to safely process interpolated strings.
-- **Multiple interpreters** in the standard library via `concurrent.interpreters`.
-- Official support for **free-threaded (“no-GIL”) builds**, alongside improvements to parallel execution.
-- New **Zstandard compression** support through `compression.zstd`.
-- **External debugging** of running Python processes with `sys.remote_exec()`.
-- Better error messages, syntax highlighting in the REPL, new UUID versions, and improved asyncio process inspection.
+- **Explicit lazy imports** with `lazy import`, allowing imports to be deferred until needed.
+- New built-in **`frozendict`** and **`sentinel`** types.
+- **UTF-8 as the default encoding**.
+- **Unpacking in comprehensions**, such as `[*items for items in lists]`.
+- New profiling tools, including a `profiling` package and Tachyon statistical profiler.
+- Improvements to the experimental **JIT compiler** and stable-ABI support for free-threaded builds.
+- Better error-message suggestions and new `.start` package startup configuration files.
 
-For upgrade planning, check compatibility with code that reads `__annotations__` directly, multiprocessing defaults, and third-party C extensions—especially when using free-threaded Python.
+See the official [Python 3.15.0 release page](https://www.python.org/downloads/release/python-3150/) and the full [“What’s New in Python 3.15” documentation](https://docs.python.org/3.15/whatsnew/3.15.html).
 
-Sources: [Python 3.14 release page](https://www.python.org/downloads/release/python-3140/) · [What’s New in Python 3.14](https://docs.python.org/3.14/whatsnew/3.14.html)
-
-A real run on 2026-10-14. It cost $0.09 of Orca credit.
+A real run on 2026-10-14. It cost $0.11 of Orca credit.
 
 ## What it uses
 

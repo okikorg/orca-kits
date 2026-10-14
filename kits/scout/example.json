@@ -1,8 +1,8 @@
 {
   "question": "What's new in the latest Python release? Cite your sources.",
-  "answer": "The latest **feature release is Python 3.14**, released on **October 7, 2025**. Its biggest changes include:\n\n- **Deferred evaluation of annotations**, plus the new `annotationlib` module.\n- **Template string literals** (`t\"...\"`), enabling libraries to safely process interpolated strings.\n- **Multiple interpreters** in the standard library via `concurrent.interpreters`.\n- Official support for **free-threaded (“no-GIL”) builds**, alongside improvements to parallel execution.\n- New **Zstandard compression** support through `compression.zstd`.\n- **External debugging** of running Python processes with `sys.remote_exec()`.\n- Better error messages, syntax highlighting in the REPL, new UUID versions, and improved asyncio process inspection.\n\nFor upgrade planning, check compatibility with code that reads `__annotations__` directly, multiprocessing defaults, and third-party C extensions—especially when using free-threaded Python.\n\nSources: [Python 3.14 release page](https://www.python.org/downloads/release/python-3140/) · [What’s New in Python 3.14](https://docs.python.org/3.14/whatsnew/3.14.html)",
-  "cost_micro_usd": 91733,
+  "answer": "The latest stable Python release is **Python 3.15.0**, released **October 9, 2026**. Its major additions include:\n\n- **Explicit lazy imports** with `lazy import`, allowing imports to be deferred until needed.\n- New built-in **`frozendict`** and **`sentinel`** types.\n- **UTF-8 as the default encoding**.\n- **Unpacking in comprehensions**, such as `[*items for items in lists]`.\n- New profiling tools, including a `profiling` package and Tachyon statistical profiler.\n- Improvements to the experimental **JIT compiler** and stable-ABI support for free-threaded builds.\n- Better error-message suggestions and new `.start` package startup configuration files.\n\nSee the official [Python 3.15.0 release page](https://www.python.org/downloads/release/python-3150/) and the full [“What’s New in Python 3.15” documentation](https://docs.python.org/3.15/whatsnew/3.15.html).",
+  "cost_micro_usd": 112030,
   "model": "orca/openrouter/openai/gpt-5.6-luna",
-  "session": "session_50b23604357e4a659c19b4585082d658",
+  "session": "session_a8c3b4721a40447db1b8cebac39c118a",
   "asked_on": "2026-10-14"
 }

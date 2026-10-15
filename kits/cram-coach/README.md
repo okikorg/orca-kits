@@ -18,4 +18,4 @@ From the CLI (the dashboard cannot attach a PDF to a chat yet):
 orca chat cram-coach --sandbox --file chapter.pdf "My exam is on 2026-11-20."
 ```
 
-Then `orca sessions artifacts download session_... --all` saves the files and `orca sessions delete session_... --yes` stops the sandbox. [The guide](https://docs.orcapods.ai/kits/cram-coach) has every step, the Anki import and how to make it yours.
+Then `orca sessions artifacts download session_... --all` saves the files and `orca sessions delete session_... --yes` stops the sandbox. In Anki, File, then Import, opens `flashcards.csv` with its fronts and backs.

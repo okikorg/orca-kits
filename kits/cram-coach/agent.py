@@ -7,7 +7,7 @@ Copy the kit, or run this file to create the agent in your organization:
 
 It reads the chapter in a sandbox, so run it with the PDF attached:
 
-    orca chat cram-coach "My exam is on 2026-10-23." --file chapter.pdf
+    orca chat cram-coach --sandbox --file chapter.pdf "My exam is on 2026-10-23."
 """
 
 import os
@@ -57,11 +57,23 @@ def define(agents):
             "pages and one concrete task. If the exam is today or tomorrow, fit the plan into the days there are. "
             "Write each date as weekday and YYYY-MM-DD, copied from the calendar of step 3. Head the plan with the "
             "chapter, today's date, the exam date and the days left.\n"
-            "- flashcards.csv: for Anki, UTF-8 and comma separated. Write the three header lines `#separator:Comma`, "
-            "`#html:false` and `#columns:Front,Back` as plain text, not through the csv module, which would put quotes "
-            "around the last one and break the import. Then write one card per row with Python's csv module, exactly "
-            "two fields, front and back. 20 to 40 cards, one fact each: key terms, definitions, causes and effects, how "
-            "to read the chapter's graphs and tables. End each back with its section in brackets, such as (3.2).\n"
+            "- flashcards.csv: for Anki. 20 to 40 cards, one fact each: key terms, definitions, causes and "
+            "effects, how to read the chapter's graphs and tables. End each back with its section in brackets, "
+            "such as (3.2). Never write the CSV yourself. First write the cards as JSON to "
+            "/workspace/cards.json: a list of objects with a front and a back, each one line of plain text. Then "
+            "run exactly this Python, which writes the file and checks that it reads back as your cards:\n"
+            "```python\n"
+            "import csv, json\n"
+            "cards = [[c['front'], c['back']] for c in json.load(open('/workspace/cards.json'))]\n"
+            "with open('/workspace/outputs/flashcards.csv', 'w', newline='', encoding='utf-8') as f:\n"
+            "    f.write('#separator:Comma\\n#html:false\\n#columns:Front,Back\\n')\n"
+            "    csv.writer(f, lineterminator='\\n').writerows(cards)\n"
+            "with open('/workspace/outputs/flashcards.csv', encoding='utf-8') as f:\n"
+            "    lines = f.read().split('\\n')\n"
+            "assert lines[:3] == ['#separator:Comma', '#html:false', '#columns:Front,Back']\n"
+            "assert list(csv.reader(lines[3:-1])) == cards\n"
+            "print(len(cards), 'cards')\n"
+            "```\n"
             "- practice-test.md: 10 to 15 numbered questions in the style of the chapter's own review questions, a mix "
             "of multiple choice (options A to D, one right) and short answer, across every section and weighted to the "
             "hardest topics. At least a third apply the chapter's methods to its own examples, tables or numbers "
@@ -70,8 +82,8 @@ def define(agents):
             "section and page, such as Section 3.2, page 61: the page of the sentence or table that states the "
             "answer, found by searching chapter.txt for it. Drop a question you cannot source and renumber.\n"
             "\n"
-            "Then check the files with Python: the CSV's first three lines are exactly the header lines, with no "
-            "quotes, and it reads back with two fields on every card row; the test and the "
+            "Then check the files with Python: run the flashcards code above again, which must print the card count "
+            "with no error; the test and the "
             "answers hold the same 10 to 15 numbers; and the plan's dates run from today to the exam date. For the "
             "weekdays, parse every `Weekday YYYY-MM-DD` in cram-plan.md with a regular expression and compare each "
             "weekday with datetime's `strftime('%A')` for its date; correct every mismatch in the file and run the "

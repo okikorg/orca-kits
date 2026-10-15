@@ -29,7 +29,8 @@ import urllib.error
 import kitlib
 from live import Run
 
-USE_IT = re.compile(r'^orca chat (\S+) "([^"\n]+)"$', re.MULTILINE)
+# The agent, any flags (such as --sandbox --file chapter.pdf), then the question.
+USE_IT = re.compile(r'^orca chat (\S+)(?: [^"\n]+?)? "([^"\n]+)"$', re.MULTILINE)
 
 
 def question_of(folder):
@@ -37,6 +38,8 @@ def question_of(folder):
     match = USE_IT.search((folder / "README.md").read_text())
     if not match:
         sys.exit(f"kits/{folder.name}/README.md has no `orca chat <agent> \"...\"` line in Use it")
+    if match.group(0) != f'orca chat {match.group(1)} "{match.group(2)}"':
+        sys.exit(f"kits/{folder.name}: its Use it line passes flags (such as a file); this script runs only a plain question")
     return match.group(1), match.group(2)
 
 

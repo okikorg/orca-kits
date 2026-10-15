@@ -35,7 +35,8 @@ README_MAX = 1_500
 SECTIONS = ["## What it uses", "## Add it", "## Use it"]
 DESCRIPTION_MAX = 140
 ANSWER_MAX = 8_000  # against a runaway capture; the card shows a long answer's first lines
-USE_IT = re.compile(r'^orca chat (\S+) "([^"\n]+)"$', re.MULTILINE)
+# The agent, any flags (such as --sandbox --file chapter.pdf), then the question.
+USE_IT = re.compile(r'^orca chat (\S+)(?: [^"\n]+?)? "([^"\n]+)"$', re.MULTILINE)
 KIT_LINK = "https://app.orcapods.ai/kits/"
 MAX_PER_KIND = 50
 MODEL = "orca/openrouter/openai/gpt-5.6-luna"

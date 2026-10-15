@@ -1,0 +1,8 @@
+{
+  "question": "My exam is on 2026-10-22.",
+  "answer": "Chapter 3, Demand and Supply. You have 7 days to the exam. Created 28 flashcards and 12 practice questions.\n\nFiles: `cram-plan.md`, `flashcards.csv`, `practice-test.md`, `answers.md`",
+  "cost_micro_usd": 16740,
+  "model": "orca/openrouter/openai/gpt-5.6-luna",
+  "session": "session_f24e8e9d36254568a311e26ad68281d7",
+  "asked_on": "2026-10-15"
+}

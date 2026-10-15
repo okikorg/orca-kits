@@ -38,36 +38,24 @@ ORCA_API_KEY=... node --experimental-strip-types kits/scout/agent.ts
 | File | What it is |
 | --- | --- |
 | `kit.json` | The kit's name, description and author |
-| `README.md` | This folder's page, and the README on the kit's page (below) |
+| `README.md` | This folder's page, and the README published with the kit (below) |
 | `agent.py`, `agent.ts` | The agent, as an `agents.create` call; the two must send the same body |
 | `template.py`, `template.ts` | An environment template, where the kit has skills |
 | `skills/<name>/SKILL.md` | A skill, with any files it refers to |
 | `run.py`, `run.ts` | Only where your code takes part: function tools, git, or files from your machine |
-| `example.json` | One real run of the kit's Use it question, written by `scripts/example.py` (below) |
 | `published.json` | The kit's ids in the Orca kits organization, written by `scripts/publish.py` |
 
 ### The README
 
-A kit's README is both its folder's page here and its card on the kit's page, so its links are absolute and it holds six sections, in this order, and nothing else:
+A kit's README is both its folder's page here and the README published with the kit, so its links are absolute and it holds five sections, in this order, and nothing else:
 
 1. `# <name>`, the kit's name as in `kit.json`.
 2. One short paragraph on what the agent does and how it answers.
-3. `## Example`: the kit's `example.json` as `scripts/example.py` writes it (below). A kit run as a program (`run.py`) has none.
-4. `## What it uses`: the model, what else it calls, whether it needs a sandbox, and a link to [pricing](https://orcapods.ai/pricing), never an amount.
-5. `## Add it`: `orca kits copy <the kit's link> --yes`, then "Or click **Copy** on [the kit's page](<the kit's link>).", and a line on credentials if it needs any.
-6. `## Use it`: the one example command.
+3. `## What it uses`: the model, what else it calls, whether it needs a sandbox, and a link to [pricing](https://orcapods.ai/pricing), never an amount.
+4. `## Add it`: `orca kits copy <the kit's link> --yes`, then "Or click **Copy** on [the kit's page](<the kit's link>).", and a line on credentials if it needs any.
+5. `## Use it`: the one example command.
 
-At most 1,500 bytes without the Example section, and `kit.json`'s description is one sentence of at most 140 characters. `scripts/check.py` enforces all of this. The kit's page shows a GitHub icon linking to the kit's folder here; `scripts/publish.py` sets that link on every publish, so the README carries no line about where it was published from.
-
-### The example
-
-The kit's page shows one real run: the Use it question, the agent's answer as it wrote it, the links it cites, and what the run cost. It is never written by hand. `scripts/example.py` records it from one live run in the test organization (copy the published kit, ask the question, read the answer and the run's cost, delete the session and the copy), into `example.json` and the README's Example section:
-
-```bash
-ORCA_PROD_TEST_API_KEY=... python scripts/example.py scout
-```
-
-`scripts/check.py` fails if the two differ, so an answer or a cost edited by hand never reaches the page. A long answer is kept whole: the page shows its first lines with **Read the full answer**. Record it again when the answer goes stale, then publish.
+At most 1,500 bytes, and `kit.json`'s description is one sentence of at most 140 characters. `scripts/check.py` enforces all of this. The kit's page shows a GitHub icon linking to the kit's folder here; `scripts/publish.py` sets that link on every publish, so the README carries no line about where it was published from.
 
 ## Checks
 

@@ -1,5 +1,5 @@
 {
   "name": "Cram Coach",
-  "description": "Turns one textbook chapter (a text PDF) and your exam date into a day-by-day cram plan, Anki flashcards, a practice test and its answers, each cited to the chapter.",
+  "description": "Turns a textbook chapter and your exam date into a cram plan, Anki cards, a practice test and answers cited to the chapter.",
   "author": "Orca"
 }

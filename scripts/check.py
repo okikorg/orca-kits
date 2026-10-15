@@ -10,15 +10,12 @@ and src/api/templates.rs (template fields). The bodies themselves are typed
 by the pinned openai packages (tsc), and the Python and TypeScript bodies
 must be equal.
 
-A kit's README is also its card on the kit's page (orca-design kits-teams
-D5.2, amended 2026-10-13 and 2026-10-14), so it holds six sections and no
-more: the title, a short description, Example, What it uses, Add it and Use
-it, in at most 1,500 bytes without the Example section. The Example section
-is the kit's example.json as scripts/example.py renders it, so an answer is
-never edited by hand. A kit run as a program (run.py) has no example.
+A kit's README is published with the kit (orca-design kits-teams D5.2,
+amended 2026-10-13 and 2026-10-15), so it holds five sections and no more:
+the title, a short description, What it uses, Add it and Use it, in at most
+1,500 bytes. Kits have no recorded example since 2026-10-15: the kit's page
+no longer shows one.
 """
-
-import datetime
 
 import json
 import re
@@ -33,8 +30,6 @@ WORD_FIELDS = {"name": 100, "description": 1000, "author": 100}
 README_MAX = 1_500
 SECTIONS = ["## What it uses", "## Add it", "## Use it"]
 DESCRIPTION_MAX = 140
-ANSWER_MAX = 8_000  # against a runaway capture; the card shows a long answer's first lines
-USE_IT = re.compile(r'^orca chat (\S+) "([^"\n]+)"$', re.MULTILINE)
 KIT_LINK = "https://app.orcapods.ai/kits/"
 MAX_PER_KIND = 50
 MODEL = "orca/openrouter/openai/gpt-5.6-luna"
@@ -134,17 +129,9 @@ def check_skills(folder, problems):
 
 
 def headings(text):
-    """(line number, heading) for each markdown heading outside fenced code
-    and outside the Example section's answer, which may hold any markdown."""
+    """(line number, heading) for each markdown heading outside fenced code."""
     found, fenced = [], False
-    span = kitlib.example_span(text)
-    offset = 0
-    for number, line in enumerate(text.splitlines(keepends=True), 1):
-        inside = span is not None and span[0] < offset < span[1]
-        offset += len(line)
-        line = line.rstrip("\n")
-        if inside:
-            continue
+    for number, line in enumerate(text.splitlines(), 1):
         if line.startswith("```"):
             fenced = not fenced
         elif not fenced and re.match(r"^#{1,6}\s", line):
@@ -152,14 +139,13 @@ def headings(text):
     return found
 
 
-def check_sections(where, text, name, public_id, has_example, problems):
-    """The title, one short paragraph, then Example (for a kit with an
-    agent to ask), What it uses, Add it and Use it."""
+def check_sections(where, text, name, public_id, problems):
+    """The title, one short paragraph, then What it uses, Add it and Use it."""
     found = headings(text)
     if not found or found[0] != (1, f"# {name}"):
         problems.add(where, f"starts with the title line \"# {name}\", the kit's name in kit.json")
     rest = [heading for _, heading in found[1:]]
-    sections = ([kitlib.EXAMPLE_HEADING] if has_example else []) + SECTIONS
+    sections = SECTIONS
     if rest != sections:
         problems.add(where, f"has exactly the sections {sections}, in that order, and no other heading; found {rest}")
         return
@@ -181,12 +167,9 @@ def check_readme(folder, problems):
     if not path.exists():
         problems.add(where, "missing")
         return
-    full = path.read_text()
-    # The example is the run's own record: its answer and cost are checked
-    # against example.json, not against the README's rules.
-    text = kitlib.without_example(full)
+    text = path.read_text()
     if len(text.encode()) > README_MAX:
-        problems.add(where, f"at most {README_MAX} bytes without the Example section, so it fits the kit's card; it has {len(text.encode())}")
+        problems.add(where, f"at most {README_MAX} bytes; it has {len(text.encode())}")
     for match in AMOUNT.finditer(text):
         problems.add(where, f"names an amount ({match.group(0)!r}); link to https://orcapods.ai/pricing instead")
     for target in LINK.findall(text):
@@ -196,54 +179,7 @@ def check_readme(folder, problems):
         name = kitlib.words(folder).get("name", "")
     except (OSError, json.JSONDecodeError):
         name = ""  # check_words reports it
-    has_example = not (folder / "run.py").exists()
-    check_sections(where, full, name, kitlib.published(folder).get("public_id"), has_example, problems)
-    if has_example:
-        check_example(folder, full, problems)
-
-
-def check_example(folder, readme, problems):
-    """example.json is one run's record, and the README shows exactly it."""
-    where = f"kits/{folder.name}/example.json"
-    try:
-        record = kitlib.example(folder)
-    except (OSError, json.JSONDecodeError) as error:
-        problems.add(where, f"cannot read: {error}")
-        return
-    if record is None:
-        problems.add(where, "missing: record one with `python scripts/example.py <slug>`")
-        return
-    if not isinstance(record, dict) or set(record) != set(kitlib.EXAMPLE_FIELDS):
-        problems.add(where, f"holds exactly {sorted(kitlib.EXAMPLE_FIELDS)}")
-        return
-    use_it = USE_IT.search(kitlib.without_example(readme))
-    if not use_it or record["question"] != use_it.group(2):
-        problems.add(where, "question is the one in the README's Use it line; record it again with scripts/example.py")
-    answer = record["answer"]
-    if not isinstance(answer, str) or not answer.strip() or len(answer.encode()) > ANSWER_MAX:
-        problems.add(where, f"answer is the agent's reply, 1 to {ANSWER_MAX} bytes")
-    if not isinstance(record["cost_micro_usd"], int) or isinstance(record["cost_micro_usd"], bool) or record["cost_micro_usd"] <= 0:
-        problems.add(where, "cost_micro_usd is the run's charge, a positive whole number")
-    if record["model"] != MODEL:
-        problems.add(where, f"model is {MODEL}, the kit's model")
-    if not isinstance(record["session"], str) or not record["session"].startswith("session_"):
-        problems.add(where, "session is the run's session id, its receipt in the usage ledger")
-    try:
-        asked = datetime.date.fromisoformat(record["asked_on"])
-        if asked > datetime.date.today():
-            problems.add(where, "asked_on is not in the future")
-    except (TypeError, ValueError):
-        problems.add(where, "asked_on is a date, YYYY-MM-DD")
-        return
-    span = kitlib.example_span(readme)
-    if problems_in(where, problems):
-        return
-    if not span or readme[span[0] : span[1]] != kitlib.render_example(record):
-        problems.add(f"kits/{folder.name}/README.md", "the Example section is example.json as scripts/example.py writes it; never edit it by hand")
-
-
-def problems_in(where, problems):
-    return any(problem.startswith(f"{where}:") for problem in problems)
+    check_sections(where, text, name, kitlib.published(folder).get("public_id"), problems)
 
 
 def check_kit(folder, problems):
@@ -290,14 +226,6 @@ def check_repo_words(problems):
             text = path.read_text()
         except UnicodeDecodeError:
             continue
-        # A kit's example is an agent's reply, kept as it was written.
-        if re.fullmatch(r"kits/[^/]+/README\.md", name):
-            text = kitlib.without_example(text)
-        elif re.fullmatch(r"kits/[^/]+/example\.json", name):
-            try:
-                text = json.dumps({k: v for k, v in json.loads(text).items() if k != "answer"})
-            except (json.JSONDecodeError, AttributeError):
-                pass
         if chr(0x2014) in text:
             problems.add(name, "has an em dash")
         if name != "scripts/check.py" and any(phrase in text for phrase in PROMPT_PHRASES):

@@ -126,7 +126,7 @@ CASES = {
         "starts with the title line",
     ),
     "two paragraphs before What it uses": (
-        lambda f: edit(f, "README.md", "\n\n## Example", "\n\nAnother paragraph.\n\n## Example"),
+        lambda f: edit(f, "README.md", "\n\n## What it uses", "\n\nAnother paragraph.\n\n## What it uses"),
         "one short paragraph",
     ),
     "a README over 1,500 bytes": (
@@ -150,45 +150,7 @@ CASES = {
         lambda f: (f / "kit.json").write_text(json.dumps({**kitlib.words(f), "description": "A research assistant. It cites sources."})),
         "one sentence",
     ),
-    "no example.json": (
-        lambda f: (f / "example.json").unlink(),
-        "missing",
-    ),
-    "an extra field in example.json": (
-        lambda f: record(f, tokens=1),
-        "holds exactly",
-    ),
-    "an empty answer": (
-        lambda f: record(f, answer=""),
-        "1 to 8000 bytes",
-    ),
-    "a cost that is not a whole number": (
-        lambda f: record(f, cost_micro_usd=0.5),
-        "positive whole number",
-    ),
-    "a date in the future": (
-        lambda f: record(f, asked_on="2999-01-01"),
-        "not in the future",
-    ),
-    "a question unlike Use it's": (
-        lambda f: record(f, question="Something else?"),
-        "Use it line",
-    ),
-    "an answer edited in the README": (
-        lambda f: edit(f, "README.md", "\n\nA real run on", " (edited)\n\nA real run on"),
-        "never edit it by hand",
-    ),
-    "a cost edited in the README": (
-        lambda f: edit(f, "README.md", "It cost $", "It cost $1"),
-        "never edit it by hand",
-    ),
 }
-
-
-def record(folder, **changes):
-    """example.json with fields changed, an unknown key added, or both."""
-    data = {**kitlib.example(folder), **changes}
-    (folder / "example.json").write_text(json.dumps(data))
 
 
 def main():

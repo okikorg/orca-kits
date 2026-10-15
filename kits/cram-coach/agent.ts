@@ -53,9 +53,10 @@ export function define<T>(agents: { create(body: AgentCreateParams): T }): T {
       'pages and one concrete task. If the exam is today or tomorrow, fit the plan into the days there are. ' +
       'Compute every date with Python\'s datetime and write it as weekday and YYYY-MM-DD. Head the plan with the ' +
       'chapter, today\'s date, the exam date and the days left.\n' +
-      '- flashcards.csv: for Anki. Write it with Python\'s csv module, UTF-8 and comma separated: the lines ' +
-      '`#separator:Comma`, `#html:false` and `#columns:Front,Back` first, then one card per row with exactly two ' +
-      'fields, front and back. 20 to 40 cards, one fact each: key terms, definitions, causes and effects, how ' +
+      '- flashcards.csv: for Anki, UTF-8 and comma separated. Write the three header lines `#separator:Comma`, ' +
+      '`#html:false` and `#columns:Front,Back` as plain text, not through the csv module, which would put quotes ' +
+      'around the last one and break the import. Then write one card per row with Python\'s csv module, exactly ' +
+      'two fields, front and back. 20 to 40 cards, one fact each: key terms, definitions, causes and effects, how ' +
       'to read the chapter\'s graphs and tables. End each back with its section in brackets, such as (3.2).\n' +
       '- practice-test.md: 10 to 15 numbered questions in the style of the chapter\'s own review questions, a mix ' +
       'of multiple choice (options A to D, one right) and short answer, across every section and weighted to the ' +
@@ -65,7 +66,8 @@ export function define<T>(agents: { create(body: AgentCreateParams): T }): T {
       'section and page, such as Section 3.2, page 61: the page of the sentence or table that states the ' +
       'answer, found by searching chapter.txt for it. Drop a question you cannot source and renumber.\n' +
       '\n' +
-      'Then check the files with Python: the CSV reads back with two fields on every card row, the test and the ' +
+      'Then check the files with Python: the CSV\'s first three lines are exactly the header lines, with no ' +
+      'quotes, and it reads back with two fields on every card row; the test and the ' +
       'answers hold the same 10 to 15 numbers, and the plan\'s dates run from today to the exam date. Fix what ' +
       'fails.\n' +
       '\n' +

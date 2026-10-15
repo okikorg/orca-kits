@@ -8,7 +8,11 @@ Model calls on `orca/openrouter/openai/gpt-5.6-luna`, paid from your Orca credit
 
 ## Add it
 
-Click **Copy** on the kit's page. Or create the same agent from code with [agent.py](https://github.com/okikorg/orca-kits/blob/main/kits/cram-coach/agent.py) or [agent.ts](https://github.com/okikorg/orca-kits/blob/main/kits/cram-coach/agent.ts).
+```bash
+orca kits copy https://app.orcapods.ai/kits/kit-KDdGOG9YTLrtpQs64 --yes
+```
+
+Or click **Copy** on [the kit's page](https://app.orcapods.ai/kits/kit-KDdGOG9YTLrtpQs64).
 
 ## Use it
 

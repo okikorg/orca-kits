@@ -1,6 +1,6 @@
 # Cram Coach
 
-Give Cram Coach one textbook chapter as a PDF and your exam date, and it saves four files: `cram-plan.md`, a day-by-day plan worked back from the exam, hardest topics first, with a review day before it; `flashcards.csv`, cards that import into Anki; `practice-test.md`, 10 to 15 questions in the chapter's style; and `answers.md`, each answer cited to its section and page. It uses only what the chapter says. Limits: text PDFs only (on a scan it says so and stops; no OCR), one chapter per run, and no reminders.
+Give Cram Coach one textbook chapter as a PDF and your exam date, and it saves four files: `cram-plan.md`, a day-by-day plan worked back from the exam, hardest topics first, with a review day before it; `flashcards.csv`, cards that import into Anki; `practice-test.md`, 10 to 15 questions in the chapter's style; and `answers.md`, each answer cited to its section and page. It uses only what the chapter says. Limits: text PDFs only (on a scan it says so and stops; no OCR), one chapter per run, no reminders, and for now PDFs under 48 KB.
 
 ## What it uses
 

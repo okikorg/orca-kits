@@ -78,7 +78,7 @@ npm ci && npx tsc --noEmit                        # TypeScript against the pinne
 python -m pip install -r requirements.txt
 python scripts/check.py                           # the kit contract, Python and TypeScript bodies equal, the words
 python scripts/test_check.py                      # the check fails on each shape the server refuses
-python scripts/check_docs_code.py ../orca-docs    # the start page's Scout code equals kits/scout
+python scripts/check_docs_code.py ../orca-docs    # the docs pages' agent code equals their kits'
 ```
 
 ## Publishing

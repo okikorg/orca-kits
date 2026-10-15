@@ -6,11 +6,15 @@ Give Cram Coach one textbook chapter as a PDF and your exam date, and it saves f
 
 > My exam is on 2026-10-22.
 
-Chapter 3, Demand and Supply. You have 7 days to the exam. Created 28 flashcards and 12 practice questions.
+Chapter 3, Demand and Supply: 7 days to the exam. Created 24 flashcards and 13 practice questions.
 
-Files: `cram-plan.md`, `flashcards.csv`, `practice-test.md`, `answers.md`
+Files:
+- `cram-plan.md`
+- `flashcards.csv`
+- `practice-test.md`
+- `answers.md`
 
-A real run on 2026-10-15. It cost $0.02 of Orca credit.
+A real run on 2026-10-15. It cost $0.01 of Orca credit.
 
 ## What it uses
 

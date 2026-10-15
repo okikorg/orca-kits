@@ -1,6 +1,8 @@
-"""The start page shows Scout's agents.create call in Python and TypeScript.
-This fails unless each equals the call in kits/scout, character for
-character, so the page and the kit can never drift.
+"""Docs pages show a kit's agents.create call in Python and TypeScript:
+the start page and the Kits tab's page for Scout show kits/scout's, and the
+Kits tab's page for Cram Coach shows kits/cram-coach's. This fails unless
+each equals the call in its kit, character for character, so a page and its
+kit can never drift.
 
     python scripts/check_docs_code.py <orca-docs dir> [<orca-kits dir>]
 
@@ -12,7 +14,12 @@ import pathlib
 import re
 import sys
 
-PAGE = "start-here.mdx"
+# Each page, and the kit whose code it shows.
+PAGES = {
+    "start-here.mdx": "scout",
+    "kits/scout.mdx": "scout",
+    "kits/cram-coach.mdx": "cram-coach",
+}
 BLOCK = re.compile(r"^```(\w+)[^\n]*\n(.*?)^```", re.DOTALL | re.MULTILINE)
 
 
@@ -49,17 +56,42 @@ def create_call(text):
     return "\n".join([lines[0]] + [line[indent:] if line[:indent].strip() == "" else line for line in lines[1:]])
 
 
-def page_calls(page):
-    """Scout's create call in each language on the page: the code blocks
-    that create an agent named scout."""
+def agent_name(call):
+    """The name a create call gives its agent, or None."""
+    found = re.search(r"\bname\s*[:=]\s*['\"]([^'\"]+)['\"]", call)
+    return found and found[1]
+
+
+def page_calls(page, name):
+    """The create call in each language on a page: the code blocks that
+    create an agent with this name."""
     calls = {}
     for lang, body in BLOCK.findall(page):
         call = create_call(body)
-        if call and re.search(r"name\s*[:=]\s*['\"]scout['\"]", call):
+        if call and agent_name(call) == name:
             key = {"python": "py", "typescript": "ts", "ts": "ts", "py": "py"}.get(lang)
             if key and key not in calls:
                 calls[key] = call
     return calls
+
+
+def check_page(docs, kits, path, kit):
+    """The errors for one page: none if each language's call equals the
+    kit's. A page not in this tree yet has nothing to compare."""
+    if not (docs / path).is_file():
+        print(f"{path} is not in the docs yet; nothing to compare")
+        return []
+    code = {key: create_call((kits / "kits" / kit / f"agent.{key}").read_text()) for key in ("py", "ts")}
+    calls = page_calls((docs / path).read_text(), agent_name(code["py"]))
+    errors = []
+    for key in ("py", "ts"):
+        if key not in calls:
+            errors.append(f"{path}: no {key} code block creating {kit}")
+        elif calls[key] != code[key]:
+            errors.append(f"{path}: the {key} code differs from kits/{kit}/agent.{key}\n--- page\n{calls[key]}\n--- kit\n{code[key]}")
+    if not errors:
+        print(f"{path}: the Python and TypeScript code equal kits/{kit}")
+    return errors
 
 
 def main(argv):
@@ -67,26 +99,9 @@ def main(argv):
         sys.exit(__doc__)
     docs = pathlib.Path(argv[0])
     kits = pathlib.Path(argv[1]) if len(argv) > 1 else pathlib.Path(__file__).resolve().parent.parent
-    page = (docs / PAGE).read_text()
-    calls = page_calls(page)
-    if not calls:
-        # The page with Scout's code is orca-docs #18; until it is on main,
-        # there is nothing to compare.
-        print(f"{PAGE} shows no Scout code yet; nothing to compare")
-        return
-    failed = False
-    for key in ("py", "ts"):
-        kit = create_call((kits / "kits" / "scout" / f"agent.{key}").read_text())
-        if key not in calls:
-            print(f"{PAGE}: no {key} code block creating scout", file=sys.stderr)
-            failed = True
-        elif calls[key] != kit:
-            print(f"{PAGE}: Scout's {key} code differs from kits/scout/agent.{key}", file=sys.stderr)
-            print(f"--- page\n{calls[key]}\n--- kit\n{kit}", file=sys.stderr)
-            failed = True
-    if failed:
-        sys.exit(1)
-    print(f"{PAGE}: Scout's Python and TypeScript code equal kits/scout")
+    errors = [error for path, kit in PAGES.items() for error in check_page(docs, kits, path, kit)]
+    if errors:
+        sys.exit("\n".join(errors))
 
 
 if __name__ == "__main__":

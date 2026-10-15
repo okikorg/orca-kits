@@ -90,3 +90,70 @@ def git(*args, check=True):
     return result.stdout.strip()
 
 
+# A kit's example: one real run, recorded by scripts/example.py in
+# example.json and shown as the README's Example section, which the kit's
+# page lifts out and draws above the README (orca-design kits-teams D5.2,
+# amended 2026-10-14). The section ends at its run line, so an answer may
+# hold any markdown, headings included.
+EXAMPLE_HEADING = "## Example"
+EXAMPLE_FIELDS = ("question", "answer", "cost_micro_usd", "model", "session", "asked_on")
+RUN_LINE = re.compile(r"^A real run on (\d{4}-\d{2}-\d{2})\. It cost \$(\d+(?:\.\d+)?) of Orca credit\.$")
+
+
+def example(folder):
+    path = folder / "example.json"
+    return json.loads(path.read_text()) if path.exists() else None
+
+
+def money(micro):
+    """Micro-USD as dollars: to the cent from a cent up, else to four places."""
+    dollars = micro / 1_000_000
+    return f"${dollars:.2f}" if dollars >= 0.01 else f"${dollars:.4f}"
+
+
+def render_example(record):
+    """The README's Example section for a record, ending at its run line."""
+    question = " ".join(record["question"].split())
+    return "\n\n".join(
+        [
+            EXAMPLE_HEADING,
+            f"> {question}",
+            record["answer"].strip(),
+            f"A real run on {record['asked_on']}. It cost {money(record['cost_micro_usd'])} of Orca credit.",
+        ]
+    )
+
+
+def example_span(text):
+    """(start, end) of the Example section in a README: from its heading to
+    the end of its run line, or None when there is none."""
+    lines = text.splitlines(keepends=True)
+    offset, start = 0, None
+    for line in lines:
+        bare = line.rstrip("\n")
+        if start is None and bare == EXAMPLE_HEADING:
+            start = offset
+        elif start is not None and RUN_LINE.match(bare):
+            return start, offset + len(bare)
+        offset += len(line)
+    return None
+
+
+def without_example(text):
+    """The README with its Example section (and the blank line after it) left out."""
+    span = example_span(text)
+    if not span:
+        return text
+    start, end = span
+    return text[:start] + text[end:].lstrip("\n")
+
+
+def with_example(text, record):
+    """The README with its Example section replaced, or added before What it uses."""
+    section = render_example(record)
+    span = example_span(text)
+    if span:
+        return text[: span[0]] + section + text[span[1] :]
+    marker = "\n## What it uses"
+    index = text.index(marker)
+    return text[:index] + "\n" + section + "\n" + text[index:]

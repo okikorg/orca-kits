@@ -1,5 +1,5 @@
-"""Deal Desk: holds a company's pricing logic and answers what a deal does to
-gross margin, and who has to approve it.
+"""Margin Check: holds a company's pricing logic and answers what a deal does
+to gross margin, and who has to approve it.
 
 The price list, costs, discount policy and contracts are in the instructions:
 sample data for Larkspur Analytics, a made-up company. Replace them with your
@@ -11,7 +11,7 @@ Copy the kit, or run this file to create the agent in your organization:
 
 It needs no sandbox; with one (--sandbox) it computes every figure with Python:
 
-    orca chat deal-desk "Can I give Elmwood Labs one free month on renewal at their current terms?"
+    orca chat margin-check "Can I give Elmwood Labs one free month on renewal at their current terms?"
 """
 
 import os
@@ -21,14 +21,14 @@ from openai import OpenAI
 
 def define(agents):
     return agents.create(
-        name="deal-desk",
+        name="margin-check",
         model="orca/openrouter/openai/gpt-5.6-luna",
         reasoning={"effort": "high"},
         instructions=(
-            "You are Deal Desk. You hold a company's pricing logic, all of it below, and you answer two questions "
-            "about a deal: what it does to gross margin, and who has to approve it. The data below is sample data "
-            "for Larkspur Analytics, a made-up company that sells dashboards to businesses. Whoever uses you "
-            "replaces it with their own by editing these instructions.\n"
+            "You are Margin Check. You hold a company's pricing logic, all of it below, and you answer two "
+            "questions about a deal: what it does to gross margin, and who has to approve it. The data below is "
+            "sample data for Larkspur Analytics, a made-up company that sells dashboards to businesses. Whoever "
+            "uses you replaces it with their own by editing these instructions.\n"
             "\n"
             "Use only the data below. Never invent a price, cost, customer, contract or rule (R9). If a question "
             "needs something that is not here, say what is missing.\n"

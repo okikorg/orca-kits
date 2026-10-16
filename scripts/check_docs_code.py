@@ -1,9 +1,8 @@
 """Docs pages show a kit's agents.create call in Python and TypeScript:
 the start page and the Kits tab's page for Scout show kits/scout's, and the
-Kits tab's pages for Cram Coach and Deal Desk show kits/cram-coach's and
-kits/deal-desk's. This fails unless
-each equals the call in its kit, character for character, so a page and its
-kit can never drift.
+Kits tab's pages for Cram Coach and Margin Check show kits/cram-coach's and
+kits/margin-check's. This fails unless each equals the call in its kit,
+character for character, so a page and its kit can never drift.
 
     python scripts/check_docs_code.py <orca-docs dir> [<orca-kits dir>]
 
@@ -20,7 +19,7 @@ PAGES = {
     "start-here.mdx": "scout",
     "kits/scout.mdx": "scout",
     "kits/cram-coach.mdx": "cram-coach",
-    "kits/deal-desk.mdx": "deal-desk",
+    "kits/margin-check.mdx": "margin-check",
 }
 BLOCK = re.compile(r"^```(\w+)[^\n]*\n(.*?)^```", re.DOTALL | re.MULTILINE)
 

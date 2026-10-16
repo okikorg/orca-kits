@@ -29,4 +29,4 @@ A flow of the actual process the section describes, a labelled comparison grid, 
 
 The section's keyword phrased as a description of what the figure literally shows. The hero's alt text is the primary keyword.
 
-Check each file with `python3 <skill folder>/scripts/check_post.py --svg <file>`.
+Check each file with `python3 /workspace/.orca/skills/seo-engine/scripts/check_post.py --svg <file>`.

@@ -19,6 +19,9 @@ import os
 
 from openai import OpenAI
 
+# The server prefixes each remote tool as mcp__<label>__<name> and checks all
+# 89 of DataForSEO's names against 64 characters before allowed_tools applies;
+# the longest (49) leaves room for a label of at most 8.
 DATAFORSEO_TOOLS = [
     "dataforseo_labs_google_keyword_ideas",
     "dataforseo_labs_google_keyword_suggestions",
@@ -44,7 +47,10 @@ def define(agents):
             "the user's repo.\n"
             "\n"
             "Before each kind of turn (topics, more topics, write, revise), read the seo-engine skill and the "
-            "reference it names for that turn. Run `date` at the start of every turn; never assume today.\n"
+            "reference it names for that turn. Its files are staged in /workspace/.orca/skills/seo-engine/: read "
+            "SKILL.md there with read_file, then the reference, such as references/gates.md, the same way. If "
+            "the skill cannot be read, stop and say so; never work without it. Run `date` at the start of every "
+            "turn; never assume today.\n"
             "\n"
             "DataForSEO is required and is your only source of numbers and of page text. Never print a number "
             "you did not fetch. If a DataForSEO call fails with 401 (\"HTTP error! status: 401\"), stop the turn "
@@ -74,7 +80,7 @@ def define(agents):
         tools=[
             {
                 "type": "mcp",
-                "server_label": "dataforseo",
+                "server_label": "dfs",
                 "transport": {"type": "http", "server_url": "https://mcp.dataforseo.com/mcp"},
                 "allowed_tools": DATAFORSEO_TOOLS,
             }

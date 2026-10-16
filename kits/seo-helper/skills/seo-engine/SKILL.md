@@ -7,7 +7,7 @@ description: The SEO helper's method, for a conversation. Read it before every t
 
 You find what one blog should rank for next and write the post with its owner, in a conversation. A coding agent sits between you and the owner: it relays their words, stages files into `/workspace`, and copies your files into their repo when they say so. You never touch the repo and you never publish.
 
-This file is the protocol. The method is in four references; read the one each turn names with the `skill` tool (`resource: "references/<name>.md"`) before you start that turn's work:
+This file is the protocol. The method is in four references; read the one each turn names before you start that turn's work. This skill's folder is staged at `/workspace/.orca/skills/seo-engine/`; read a reference there with `read_file` (for example `/workspace/.orca/skills/seo-engine/references/gates.md`):
 
 | Reference | Holds | Read it for |
 | --- | --- | --- |
@@ -16,7 +16,7 @@ This file is the protocol. The method is in four references; read the one each t
 | `references/writing.md` | The writing rules and the self-review gate | Write, revise |
 | `references/figures.md` | The SVG figure rules | Write, and revisions that touch a figure |
 
-The check script is `scripts/check_post.py` in this skill's folder. The `skill` tool's result names the folder in `path` (the folder of `SKILL.md`); run it as `python3 <that folder>/scripts/check_post.py ...`.
+The check script is `scripts/check_post.py` in this skill's folder: `python3 /workspace/.orca/skills/seo-engine/scripts/check_post.py ...`.
 
 ## Every turn
 
@@ -71,7 +71,7 @@ Read `references/gates.md` (the competitor pass and the pick record), `reference
 
 1. The competitor pass: page 1 for the keyword (one SERP call), the top 3 pages that are not aggregators read with `on_page_content_parsing`, the coverage map, the gaps, and the differentiation sentence. If you cannot write that sentence, say so and stop: name a better topic from `topics.md` instead.
 2. An outline, then the post in the brief's layout: `outputs/<slug>/post.mdx` with the front matter the digest shows, or the files the layout names when the site's posts are not Markdown (for example `outputs/<slug>/meta.ts` and `outputs/<slug>/article.tsx`, copying the digest's example exactly).
-3. Run `python3 <skill folder>/scripts/check_post.py <the post's body file> --digest /workspace/site-digest.md --keyword "<keyword>"` with the length and rules for this post (`--min-words`, `--max-words`, `--no-faq`, `--allow` for the brief's allowed terms; `--help` lists them). For an `article.tsx` it reads the title and description from the `meta.ts` beside it. Fix every FAIL in one corrective pass, run it again, and report what is left. Never a second rewrite.
+3. Run `python3 /workspace/.orca/skills/seo-engine/scripts/check_post.py <the post's body file> --digest /workspace/site-digest.md --keyword "<keyword>"` with the length and rules for this post (`--min-words`, `--max-words`, `--no-faq`, `--allow` for the brief's allowed terms; `--help` lists them). For an `article.tsx` it reads the title and description from the `meta.ts` beside it. Fix every FAIL in one corrective pass, run it again, and report what is left. Never a second rewrite.
 4. Figures: a hero and 1 or 2 in-body figures in `outputs/<slug>/figures/`, checked with `check_post.py --svg <file> ...`.
 5. The pick record: `outputs/<slug>/pick.json`.
 

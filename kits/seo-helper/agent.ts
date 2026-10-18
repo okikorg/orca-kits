@@ -80,7 +80,7 @@ export function define<T>(agents: { create(body: AgentCreateParams): T }): T {
       '\n' +
       'BUDGETS, per turn, at most\n' +
       '- Topics: 6 Labs calls, 10 SERP pages, 3 page parses.\n' +
-      '- More topics: 3 Labs calls, 5 SERP pages.\n' +
+      '- More topics: 4 Labs calls, 5 SERP pages.\n' +
       '- Brief: 2 Labs calls, 1 SERP page, 3 page parses.\n' +
       'Count every call as you make it; the budget is a limit, not a target. When the budget runs out, ' +
       'decide with what you have and say what you did not check.\n' +

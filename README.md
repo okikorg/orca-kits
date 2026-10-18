@@ -11,6 +11,7 @@ New to Orca? Start at [docs.orcapods.ai/start-here](https://docs.orcapods.ai/sta
 | [Scout](kits/scout/) | Researches a question on the web and answers with its sources | None |
 | [Cram Coach](kits/cram-coach/) | Turns one textbook chapter (a text PDF) and an exam date into a cram plan, Anki flashcards, a practice test and cited answers | None; you attach the PDF with `orca chat --file` |
 | [Margin Check](kits/margin-check/) | Answers what a deal does to gross margin and who has to approve it, from a sample company's price list, discount policy and contracts, held in its instructions | None |
+| [SEO helper](kits/seo-helper/) | Finds blog topics with DataForSEO's numbers and briefs the post | Your coding agent sends your post list and writes the post; a DataForSEO account |
 
 Each folder's README says what the kit does, what it uses, and how to add and use it.
 

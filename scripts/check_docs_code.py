@@ -20,6 +20,7 @@ PAGES = {
     "kits/scout.mdx": "scout",
     "kits/cram-coach.mdx": "cram-coach",
     "kits/margin-check.mdx": "margin-check",
+    "kits/seo-helper.mdx": "seo-helper",
 }
 BLOCK = re.compile(r"^```(\w+)[^\n]*\n(.*?)^```", re.DOTALL | re.MULTILINE)
 

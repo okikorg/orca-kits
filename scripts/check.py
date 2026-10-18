@@ -4,6 +4,9 @@ words.
     python scripts/check.py              every kit, and every file's words
     python scripts/check.py scout        one kit
 
+An mcp tool must name a server in HOSTED_MCP_SERVERS and list its
+allowed_tools (orca-design seo-helper-kit D5.14).
+
 The kit rules mirror orca-agent-server main@46db784: src/kits/mod.rs
 (selection, manifest, templates), src/api/validation.rs (agent fields, tools)
 and src/api/templates.rs (template fields). The bodies themselves are typed
@@ -40,6 +43,10 @@ USE_IT = re.compile(r'^orca chat (\S+)(?: [^"\n]+?)? "([^"\n]+)"$', re.MULTILINE
 KIT_LINK = "https://app.orcapods.ai/kits/"
 MAX_PER_KIND = 50
 MODEL = "orca/openrouter/openai/gpt-5.6-luna"
+# Remote MCP servers hosted Orca can reach: their origins are in production's
+# ORCA_MCP_ALLOWED_ORIGINS (orca-agent-server docs/deployment/railway.md).
+# Any other URL fails at session create.
+HOSTED_MCP_SERVERS = {"https://mcp.dataforseo.com/mcp"}
 SKILL_NAME = re.compile(r"^[A-Za-z0-9_-]+$")
 # A currency sign before a digit, a percentage, or a number before a unit of
 # money or time: amounts belong on the pricing page, not in a README.
@@ -90,7 +97,12 @@ def check_agent(where, body, problems):
         elif tool["type"] == "function" and not tool.get("name"):
             problems.add(where, f"tools[{i}] function needs a name")
         elif tool["type"] == "mcp":
-            problems.add(where, f"tools[{i}]: remote MCP is blocked on hosted Orca")
+            url = (tool.get("transport") or {}).get("server_url")
+            if url not in HOSTED_MCP_SERVERS:
+                problems.add(where, f"tools[{i}]: hosted Orca reaches only these MCP servers: {sorted(HOSTED_MCP_SERVERS)}")
+            allowed = tool.get("allowed_tools")
+            if not isinstance(allowed, list) or not allowed or not all(isinstance(t, str) and t for t in allowed):
+                problems.add(where, f"tools[{i}]: an mcp tool lists the tools the model may call in allowed_tools")
 
 
 def check_template(where, body, skill_names, problems):

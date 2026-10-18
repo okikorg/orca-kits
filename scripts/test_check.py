@@ -25,6 +25,9 @@ export function define(templates: any, skills: any) {
 }
 '''
 SKILL = "---\nname: %s\ndescription: A test skill.\n---\nDo the thing.\n"
+DATAFORSEO = "https://mcp.dataforseo.com/mcp"
+MCP_PY = '[{"type": "mcp", "server_label": "x", "transport": {"type": "http", "server_url": "%s"}%s}]'
+MCP_TS = "[{ type: 'mcp', server_label: 'x', transport: { type: 'http', server_url: '%s' }%s } as any]"
 
 
 def edit(folder, name, old, new):
@@ -37,6 +40,11 @@ def edit(folder, name, old, new):
 def both(folder, old_py, new_py, old_ts, new_ts):
     edit(folder, "agent.py", old_py, new_py)
     edit(folder, "agent.ts", old_ts, new_ts)
+
+
+def mcp(folder, url, allowed_py, allowed_ts):
+    """Scout's web_search tool replaced by one mcp tool."""
+    both(folder, '[{"type": "web_search"}]', MCP_PY % (url, allowed_py), "[{ type: 'web_search' }]", MCP_TS % (url, allowed_ts))
 
 
 def add_template(folder, skill_folder, skill_name, named, extra_py="", extra_ts=""):
@@ -59,15 +67,17 @@ CASES = {
         lambda f: both(f, "gpt-5.6-luna", "gpt-5.6", "gpt-5.6-luna", "gpt-5.6"),
         "Orca credit model",
     ),
-    "remote MCP": (
-        lambda f: both(
-            f,
-            '[{"type": "web_search"}]',
-            '[{"type": "mcp", "server_label": "x"}]',
-            "[{ type: 'web_search' }]",
-            "[{ type: 'mcp', server_label: 'x' } as any]",
-        ),
-        "remote MCP is blocked",
+    "an MCP server hosted Orca cannot reach": (
+        lambda f: mcp(f, "https://mcp.example.com/mcp", ', "allowed_tools": ["search"]', ", allowed_tools: ['search']"),
+        "reaches only these MCP servers",
+    ),
+    "an mcp tool without allowed_tools": (
+        lambda f: mcp(f, DATAFORSEO, "", ""),
+        "allowed_tools",
+    ),
+    "an mcp tool with empty allowed_tools": (
+        lambda f: mcp(f, DATAFORSEO, ', "allowed_tools": []', ", allowed_tools: []"),
+        "allowed_tools",
     ),
     "skill name differs from its folder": (
         lambda f: add_template(f, "notes", "other", "notes"),
@@ -185,6 +195,14 @@ CASES = {
 }
 
 
+# Shapes the check must accept, each on a copy of kits/scout.
+PASSES = {
+    "an mcp tool for an allowed server with allowed_tools": lambda f: mcp(
+        f, DATAFORSEO, ', "allowed_tools": ["serp_locations"]', ", allowed_tools: ['serp_locations']"
+    ),
+}
+
+
 def record(folder, **changes):
     """example.json with fields changed, an unknown key added, or both."""
     data = {**kitlib.example(folder), **changes}
@@ -209,6 +227,16 @@ def main():
                 failures.append(f"{name}: expected a problem with {expected!r}, got {list(problems)}")
             else:
                 print(f"refused: {name}")
+        for name, make_it in PASSES.items():
+            folder = pathlib.Path(tmp) / name.replace(" ", "-")
+            shutil.copytree(SCOUT, folder, ignore=shutil.ignore_patterns("published.json", "__pycache__"))
+            make_it(folder)
+            problems = check.Problems()
+            check.check_kit(folder, problems)
+            if problems:
+                failures.append(f"{name}: expected no problem, got {list(problems)}")
+            else:
+                print(f"accepted: {name}")
     for failure in failures:
         print(failure, file=sys.stderr)
     if failures:

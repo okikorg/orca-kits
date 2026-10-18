@@ -33,7 +33,9 @@ import kitlib
 AGENT_FIELDS = {"model", "instructions", "name", "metadata", "multi_agent", "reasoning", "service_tier", "text", "tools"}
 TOOL_TYPES = {"function", "tool_search", "programmatic_tool_calling", "web_search", "mcp"}
 TEMPLATE_FIELDS = {"name", "capability_directories", "env", "files", "network", "packages", "plugins", "setup_commands", "skills"}
-WORD_FIELDS = {"name": 100, "description": 1000, "author": 100}
+# No author: only Orca publishes kits, and the server refuses the field
+# (orca-design kit-trust D5.13).
+WORD_FIELDS = {"name": 100, "description": 1000}
 README_MAX = 1_500
 SECTIONS = ["## What it uses", "## Add it", "## Use it"]
 DESCRIPTION_MAX = 140

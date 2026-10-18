@@ -21,4 +21,4 @@ orca vaults credentials add dataforseo --name dataforseo --server https://mcp.da
 orca chat seo-helper --vault dataforseo "Give me the top 5 topics for my blog's next post."
 ```
 
-From a coding agent: "Let's do SEO with seo-helper: top 5 topics for my next post." It sends your post list with the question, then asks for a brief for the topic you pick.
+From a coding agent: "Let's do SEO with seo-helper: top 5 topics for my next post." It sends your post list with the question, then asks `Brief: <keyword>` for the one you pick, never a number.

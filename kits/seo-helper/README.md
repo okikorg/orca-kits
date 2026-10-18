@@ -1,6 +1,6 @@
 # SEO Helper
 
-It researches what your blog should rank for next with DataForSEO: five topics that pass its gates, each with its search numbers, who ranks for it today and the gap you can win, then an SEO brief for the one you pick (keywords, titles, an outline, the questions people ask, internal links, sources). Your coding agent writes the post from the brief, under your repo's own rules, and commits it.
+It researches what your blog should rank for next with DataForSEO: five topics that pass its gates, with their numbers and the gap you can win, then an SEO brief for the one you pick. Your coding agent writes the post from the brief, under your repo's own rules, and commits it.
 
 ## What it uses
 
@@ -8,7 +8,13 @@ Model calls on `orca/openrouter/openai/gpt-5.6-luna`, paid from your Orca credit
 
 ## Add it
 
-Add your DataForSEO login once, in your own terminal (it asks for the API password in a hidden prompt; use the API login and password from app.dataforseo.com, API access, not your dashboard password):
+```bash
+orca kits copy https://app.orcapods.ai/kits/kit-utRCllawsrI2cqKdT --yes
+```
+
+Or click **Copy** on [the kit's page](https://app.orcapods.ai/kits/kit-utRCllawsrI2cqKdT).
+
+Then add your DataForSEO API login once, in your own terminal; the password goes in a hidden prompt (from app.dataforseo.com, API access):
 
 ```
 orca vaults create dataforseo

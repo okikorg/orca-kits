@@ -23,7 +23,7 @@ Model calls on `orca/openrouter/openai/gpt-5.6-luna`, paid from your Orca credit
 ## Add it
 
 ```bash
-orca kits copy https://app.orcapods.ai/kits/kit-KDdGOG9YTLrtpQs64 --yes
+orca kits copy https://app.orcapods.ai/kits/kit-KDdGOG9YTLrtpQs64
 ```
 
 Or click **Copy** on [the kit's page](https://app.orcapods.ai/kits/kit-KDdGOG9YTLrtpQs64).

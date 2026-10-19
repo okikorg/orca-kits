@@ -33,7 +33,9 @@ import kitlib
 AGENT_FIELDS = {"model", "instructions", "name", "metadata", "multi_agent", "reasoning", "service_tier", "text", "tools"}
 TOOL_TYPES = {"function", "tool_search", "programmatic_tool_calling", "web_search", "mcp"}
 TEMPLATE_FIELDS = {"name", "capability_directories", "env", "files", "network", "packages", "plugins", "setup_commands", "skills"}
-WORD_FIELDS = {"name": 100, "description": 1000, "author": 100}
+# No author: only Orca publishes kits, and the server refuses the field
+# (orca-design kit-trust D5.13).
+WORD_FIELDS = {"name": 100, "description": 1000}
 README_MAX = 1_500
 SECTIONS = ["## What it uses", "## Add it", "## Use it"]
 DESCRIPTION_MAX = 140
@@ -183,8 +185,9 @@ def check_sections(where, text, name, public_id, has_example, problems):
     if not intro or "\n\n" in intro or intro.startswith(("-", "*", ">", "```", "|")):
         problems.add(where, "has one short paragraph between the title and What it uses")
     add_it = "\n".join(lines[starts["## Add it"] : starts["## Use it"] - 1])
-    if public_id and f"orca kits copy {KIT_LINK}{public_id} --yes" not in add_it:
-        problems.add(where, f"Add it holds `orca kits copy {KIT_LINK}{public_id} --yes`, the kit's own link")
+    copy_line = f"orca kits copy {KIT_LINK}{public_id}"
+    if public_id and copy_line not in add_it.splitlines():
+        problems.add(where, f"Add it holds `{copy_line}` on its own line, the kit's own link, without `--yes`, so a person reads the review and answers y/N")
     if public_id and f"Or click **Copy** on [the kit's page]({KIT_LINK}{public_id})." not in add_it:
         problems.add(where, f"Add it ends with \"Or click **Copy** on [the kit's page]({KIT_LINK}{public_id}).\"")
 

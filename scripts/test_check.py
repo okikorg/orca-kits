@@ -111,6 +111,10 @@ CASES = {
         lambda f: (f / "kit.json").write_text(json.dumps({**kitlib.words(f), "tags": []})),
         "holds exactly",
     ),
+    "author in kit.json": (
+        lambda f: (f / "kit.json").write_text(json.dumps({**kitlib.words(f), "author": "Orca"})),
+        "holds exactly",
+    ),
     "amount in the README": (
         lambda f: edit(f, "README.md", "See [pricing]", "It costs $0.01 a search. See [pricing]"),
         "names an amount",
@@ -148,6 +152,13 @@ CASES = {
             (f / "published.json").write_text(json.dumps({"public_id": "kit-AbCdEfGhIjKlMnOpQ"})),
         ),
         "the kit's own link",
+    ),
+    "Add it copies with --yes": (
+        lambda f: (
+            (f / "published.json").write_text(json.dumps({"public_id": "kit-tdCEUXGA3NbuIWJJ6"})),
+            edit(f, "README.md", "kit-tdCEUXGA3NbuIWJJ6\n```", "kit-tdCEUXGA3NbuIWJJ6 --yes\n```"),
+        ),
+        "without `--yes`",
     ),
     "Add it still says Get started": (
         lambda f: (

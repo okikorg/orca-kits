@@ -17,10 +17,10 @@ Each folder's README says what the kit does, what it uses, and how to add and us
 
 ## Add a kit
 
-Copy it into your organization with its link:
+Copy it into your organization with its link. The CLI prints what the kit holds, then asks y/N:
 
 ```bash
-orca kits copy https://app.orcapods.ai/kits/kit-tdCEUXGA3NbuIWJJ6 --yes   # Scout
+orca kits copy https://app.orcapods.ai/kits/kit-tdCEUXGA3NbuIWJJ6   # Scout
 ```
 
 Or open the link and choose **Copy**. A copy becomes ordinary agents, skills and templates in your organization, with no tie back to the kit. See [kits](https://docs.orcapods.ai/kits).
@@ -39,14 +39,14 @@ ORCA_API_KEY=... node --experimental-strip-types kits/scout/agent.ts
 
 | File | What it is |
 | --- | --- |
-| `kit.json` | The kit's name, description and author |
+| `kit.json` | The kit's name and description |
 | `README.md` | This folder's page, and the README on the kit's page (below) |
 | `agent.py`, `agent.ts` | The agent, as an `agents.create` call; the two must send the same body |
 | `template.py`, `template.ts` | An environment template, where the kit has skills |
 | `skills/<name>/SKILL.md` | A skill, with any files it refers to |
 | `run.py`, `run.ts` | Only where your code takes part: function tools, git, or files from your machine |
 | `example.json` | Optional: one real run of the kit's Use it question, written by `scripts/example.py` (below) |
-| `published.json` | The kit's ids in the Orca kits organization, written by `scripts/publish.py` |
+| `published.json` | The kit's ids in the Orca kits organization, written by `scripts/publish.py`, and its public id once Orca first publishes it |
 
 ### The README
 
@@ -56,10 +56,10 @@ A kit's README is both its folder's page here and the README published with the 
 2. One short paragraph on what the agent does and how it answers.
 3. `## Example`, only when the kit has an `example.json`: that file as `scripts/example.py` writes it (below).
 4. `## What it uses`: the model, what else it calls, whether it needs a sandbox, and a link to [pricing](https://orcapods.ai/pricing), never an amount.
-5. `## Add it`: `orca kits copy <the kit's link> --yes`, then "Or click **Copy** on [the kit's page](<the kit's link>).", and a line on credentials if it needs any.
+5. `## Add it`: `orca kits copy <the kit's link>` on its own line, never with `--yes`, so a person reads the review and answers y/N; then "Or click **Copy** on [the kit's page](<the kit's link>).", and a line on credentials if it needs any.
 6. `## Use it`: the one example command.
 
-At most 1,500 bytes without the Example section, and `kit.json`'s description is one sentence of at most 140 characters. `scripts/check.py` enforces all of this. The kit's page shows a GitHub icon linking to the kit's folder here; `scripts/publish.py` sets that link on every publish, so the README carries no line about where it was published from.
+At most 1,500 bytes without the Example section, and `kit.json`'s description is one sentence of at most 140 characters. `scripts/check.py` enforces all of this. The kit's page shows a GitHub icon linking to the kit's folder here; `scripts/publish.py` sets that link on every draft, so the README carries no line about where it was published from.
 
 ### The example
 
@@ -80,12 +80,17 @@ npm ci && npx tsc --noEmit                        # TypeScript against the pinne
 python -m pip install -r requirements.txt
 python scripts/check.py                           # the kit contract, Python and TypeScript bodies equal, the words
 python scripts/test_check.py                      # the check fails on each shape the server refuses
+python scripts/test_publish.py                    # publish.py updates drafts only, and prints the operator line
 python scripts/check_docs_code.py ../orca-docs    # the docs pages' agent code equals their kits'
 ```
 
 ## Publishing
 
-Kits are published from the Orca kits organization on production by the **publish** workflow, which a maintainer starts with the kit's folder name and approves. Each kit is run live before a release with `scripts/live.py`.
+Only Orca publishes kits, from the Orca kits organization, and only the server's operator command publishes. Every step, the publish key and the constraints on each are in orca-agent-server's [Publishing a kit](https://github.com/okikorg/orca-agent-server/blob/main/docs/kits-publishing.md). Each kit is run live before a release with `scripts/live.py`.
+
+1. **Update the draft.** From a clean checkout of `main`, run `python scripts/publish.py <slug>` with the publish key in `ORCA_KITS_API_KEY`: a Member key of the Orca kits organization whose id is in the server's `ORCA_KIT_PUBLISHER_KEYS`, kept in the publisher's own environment and never on GitHub. It updates the kit's agent, skills, template and draft by the ids in `published.json`, publishes nothing, and prints the operator line: `orca-agent-server kits publish --kit <kit_...> --public-id <kit-...>`, with no `--public-id` for a kit's first publish.
+2. **Review the diff.** Run that line at the server container's shell. It prints the version's review and a diff against the live version.
+3. **Type yes** to publish it. Anything else publishes nothing.
 
 ## The 1.x kits
 

@@ -33,4 +33,5 @@ jobs:
       - run: python -m py_compile kits/*/*.py scripts/*.py
       - run: python scripts/check.py
       - run: python scripts/test_check.py
+      - run: python scripts/test_publish.py
       - run: python scripts/check_docs_code.py .orca-docs

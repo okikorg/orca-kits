@@ -17,10 +17,10 @@ Each folder's README says what the kit does, what it uses, and how to add and us
 
 ## Add a kit
 
-Copy it into your organization with its link:
+Copy it into your organization with its link. The CLI prints what the kit holds, then asks y/N:
 
 ```bash
-orca kits copy https://app.orcapods.ai/kits/kit-tdCEUXGA3NbuIWJJ6 --yes   # Scout
+orca kits copy https://app.orcapods.ai/kits/kit-tdCEUXGA3NbuIWJJ6   # Scout
 ```
 
 Or open the link and choose **Copy**. A copy becomes ordinary agents, skills and templates in your organization, with no tie back to the kit. See [kits](https://docs.orcapods.ai/kits).
@@ -56,7 +56,7 @@ A kit's README is both its folder's page here and the README published with the 
 2. One short paragraph on what the agent does and how it answers.
 3. `## Example`, only when the kit has an `example.json`: that file as `scripts/example.py` writes it (below).
 4. `## What it uses`: the model, what else it calls, whether it needs a sandbox, and a link to [pricing](https://orcapods.ai/pricing), never an amount.
-5. `## Add it`: `orca kits copy <the kit's link> --yes`, then "Or click **Copy** on [the kit's page](<the kit's link>).", and a line on credentials if it needs any.
+5. `## Add it`: `orca kits copy <the kit's link>` on its own line, never with `--yes`, so a person reads the review and answers y/N; then "Or click **Copy** on [the kit's page](<the kit's link>).", and a line on credentials if it needs any.
 6. `## Use it`: the one example command.
 
 At most 1,500 bytes without the Example section, and `kit.json`'s description is one sentence of at most 140 characters. `scripts/check.py` enforces all of this. The kit's page shows a GitHub icon linking to the kit's folder here; `scripts/publish.py` sets that link on every draft, so the README carries no line about where it was published from.

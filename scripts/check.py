@@ -185,8 +185,9 @@ def check_sections(where, text, name, public_id, has_example, problems):
     if not intro or "\n\n" in intro or intro.startswith(("-", "*", ">", "```", "|")):
         problems.add(where, "has one short paragraph between the title and What it uses")
     add_it = "\n".join(lines[starts["## Add it"] : starts["## Use it"] - 1])
-    if public_id and f"orca kits copy {KIT_LINK}{public_id} --yes" not in add_it:
-        problems.add(where, f"Add it holds `orca kits copy {KIT_LINK}{public_id} --yes`, the kit's own link")
+    copy_line = f"orca kits copy {KIT_LINK}{public_id}"
+    if public_id and copy_line not in add_it.splitlines():
+        problems.add(where, f"Add it holds `{copy_line}` on its own line, the kit's own link, without `--yes`, so a person reads the review and answers y/N")
     if public_id and f"Or click **Copy** on [the kit's page]({KIT_LINK}{public_id})." not in add_it:
         problems.add(where, f"Add it ends with \"Or click **Copy** on [the kit's page]({KIT_LINK}{public_id}).\"")
 

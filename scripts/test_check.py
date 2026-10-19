@@ -153,6 +153,13 @@ CASES = {
         ),
         "the kit's own link",
     ),
+    "Add it copies with --yes": (
+        lambda f: (
+            (f / "published.json").write_text(json.dumps({"public_id": "kit-tdCEUXGA3NbuIWJJ6"})),
+            edit(f, "README.md", "kit-tdCEUXGA3NbuIWJJ6\n```", "kit-tdCEUXGA3NbuIWJJ6 --yes\n```"),
+        ),
+        "without `--yes`",
+    ),
     "Add it still says Get started": (
         lambda f: (
             (f / "published.json").write_text(json.dumps({"public_id": "kit-tdCEUXGA3NbuIWJJ6"})),

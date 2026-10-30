@@ -34,4 +34,5 @@ jobs:
       - run: python scripts/check.py
       - run: python scripts/test_check.py
       - run: python scripts/test_publish.py
+      - run: python scripts/test_connect_mcp_oauth.py
       - run: python scripts/check_docs_code.py .orca-docs

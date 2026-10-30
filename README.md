@@ -71,6 +71,16 @@ ORCA_PROD_TEST_API_KEY=... python scripts/example.py scout
 
 `scripts/check.py` fails if the two differ, so an answer or a cost edited by hand never reaches the README. Record it again when the answer goes stale.
 
+## Connect an MCP server that uses OAuth
+
+`orca vaults credentials add` takes a token or a login and password. For a remote MCP server that signs you in with OAuth instead, such as [Composio Connect](https://docs.orcapods.ai/guides/connect-apps-composio), use `scripts/connect_mcp_oauth.py`. It works with any MCP server that does OAuth with dynamic client registration and PKCE:
+
+```bash
+python3 scripts/connect_mcp_oauth.py --server https://connect.composio.dev/mcp --vault composio
+```
+
+It registers a client with the server, opens your browser to sign in, takes the reply once on `127.0.0.1`, and creates an `mcp_oauth` credential in the vault, bound to that exact URL, with what Orca needs to refresh the token itself. Run it again to sign in again: the new credential replaces the one for the same URL in that vault. The Orca key comes from `ORCA_API_KEY`, else your `orca auth login`, else a hidden prompt, and must be an admin's. It prints only ids, never a token or a key, and writes nothing to disk.
+
 ## Checks
 
 Every pull request runs:
@@ -81,6 +91,7 @@ python -m pip install -r requirements.txt
 python scripts/check.py                           # the kit contract, Python and TypeScript bodies equal, the words
 python scripts/test_check.py                      # the check fails on each shape the server refuses
 python scripts/test_publish.py                    # publish.py updates drafts only, and prints the operator line
+python scripts/test_connect_mcp_oauth.py          # the connect script signs in safely and stores the right credential
 python scripts/check_docs_code.py ../orca-docs    # the docs pages' agent code equals their kits'
 ```
 

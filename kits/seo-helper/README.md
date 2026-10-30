@@ -4,7 +4,7 @@ It researches what your blog should rank for next with DataForSEO: five topics t
 
 ## What it uses
 
-Model calls on `orca/openrouter/openai/gpt-5.6-luna`, paid from your Orca credit, and no sandbox. **DataForSEO, required:** its MCP server at `https://mcp.dataforseo.com/mcp`, called with your own DataForSEO API login, so each search is charged to your DataForSEO account at [their prices](https://dataforseo.com/pricing). See [Orca's pricing](https://orcapods.ai/pricing).
+Model calls on `orca/openrouter/openai/gpt-5.6-luna`, paid from your Orca credit, and no sandbox. **DataForSEO, required:** its MCP server, with your own DataForSEO API login; each search is charged to your DataForSEO account at [their prices](https://dataforseo.com/pricing). MCP servers outside Orca (DataForSEO): need credit on Free. See [Orca's pricing](https://orcapods.ai/pricing).
 
 ## Add it
 

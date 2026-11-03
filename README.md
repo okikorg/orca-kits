@@ -12,6 +12,8 @@ New to Orca? Start at [docs.orcapods.ai/start-here](https://docs.orcapods.ai/sta
 | [Cram Coach](kits/cram-coach/) | Turns one textbook chapter (a text PDF) and an exam date into a cram plan, Anki flashcards, a practice test and cited answers | None; you attach the PDF with `orca chat --file` |
 | [Margin Check](kits/margin-check/) | Answers what a deal does to gross margin and who has to approve it, from a sample company's price list, discount policy and contracts, held in its instructions | None |
 | [SEO helper](kits/seo-helper/) | Finds blog topics with DataForSEO's numbers and briefs the post | Your coding agent sends your post list and writes the post; a DataForSEO account |
+| [Apollo GTM Agent](kits/apollo-gtm-agent/) | From your website, finds competitors, defines campaigns, finds potential customers and decision makers in Apollo, and drafts a personalised email to each | `connect_apollo.py` connects your Apollo account to a vault once; an Apollo account |
+| [Demo Prep Agent](kits/demo-prep-agent/) | Researches a cold lead with web search and Apollo, maps where your products fit it, and plans a detailed demo for it | The same Apollo connection; an Apollo account |
 
 Each folder's README says what the kit does, what it uses, and how to add and use it.
 

@@ -47,8 +47,9 @@ MAX_PER_KIND = 50
 MODEL = "orca/openrouter/openai/gpt-5.6-luna"
 # Remote MCP servers hosted Orca can reach: their origins are in production's
 # ORCA_MCP_ALLOWED_ORIGINS (orca-agent-server docs/deployment/railway.md).
-# Any other URL fails at session create.
-HOSTED_MCP_SERVERS = {"https://mcp.dataforseo.com/mcp"}
+# Any other URL fails at session create. Apollo's was confirmed by creating
+# sessions with it, and calling its tools, on api.orcapods.ai.
+HOSTED_MCP_SERVERS = {"https://mcp.dataforseo.com/mcp", "https://mcp.apollo.io/mcp"}
 SKILL_NAME = re.compile(r"^[A-Za-z0-9_-]+$")
 # A currency sign before a digit, a percentage, or a number before a unit of
 # money or time: amounts belong on the pricing page, not in a README.

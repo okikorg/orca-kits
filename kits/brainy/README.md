@@ -8,7 +8,11 @@ Orca's free model, `orca/openrouter/cohere/north-mini-code:free`, so it needs no
 
 ## Add it
 
-Click **Copy** on the kit's page. You need an Orca account; signing up is free.
+```bash
+orca kits copy https://app.orcapods.ai/kits/kit-a1CZzEoDuS2esplDM
+```
+
+Or click **Copy** on [the kit's page](https://app.orcapods.ai/kits/kit-a1CZzEoDuS2esplDM). You need an Orca account; signing up is free.
 
 ## Use it
 

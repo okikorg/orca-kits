@@ -4,7 +4,7 @@ Brainy is a friendly thinking partner for messy notes, a public version of the B
 
 ## What it uses
 
-Model calls on `orca/openrouter/openai/gpt-5.6-luna`, paid from your Orca credit. No tools and no sandbox, so no machine time. On the Free plan with no credit, Orca offers to switch the chat to its free model. See [pricing](https://orcapods.ai/pricing).
+Orca's free model, `orca/openrouter/cohere/north-mini-code:free`, so it needs no credit on any plan. The free model is shared, so at times it is busy, and it has a daily limit; see [pricing](https://orcapods.ai/pricing). No tools and no sandbox, so no machine time.
 
 ## Add it
 

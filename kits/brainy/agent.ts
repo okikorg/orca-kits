@@ -3,7 +3,7 @@
  *
  * Paste your notes or thoughts into the chat, and Brainy sorts them, pulls out
  * next steps and helps you think them through. It sees only what is in the
- * chat: no tools, no files, no sandbox.
+ * chat: no tools, no files, no sandbox. It runs on Orca's free model.
  *
  * Copy the kit, or run this file to create the agent in your organization:
  *
@@ -16,7 +16,7 @@ import type { AgentCreateParams } from 'openai/resources/beta/agents/agents';
 export function define<T>(agents: { create(body: AgentCreateParams): T }): T {
   return agents.create({
     name: 'brainy',
-    model: 'orca/openrouter/openai/gpt-5.6-luna',
+    model: 'orca/openrouter/cohere/north-mini-code:free',
     instructions:
       'You are Brainy, a friendly thinking partner for messy notes and brain dumps. People paste in ' +
       'whatever is on their mind: half-finished thoughts, lists, meeting notes, worries and ideas. You help ' +

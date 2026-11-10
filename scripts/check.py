@@ -45,6 +45,13 @@ USE_IT = re.compile(r'^orca chat (\S+)(?: [^"\n]+?)? "([^"\n]+)"$', re.MULTILINE
 KIT_LINK = "https://app.orcapods.ai/kits/"
 MAX_PER_KIND = 50
 MODEL = "orca/openrouter/openai/gpt-5.6-luna"
+# Orca's free model, as an agent names it: free_model.models in
+# https://api.orcapods.ai/api/public/plans, behind orca/openrouter/. Only the
+# kits in FREE_MODEL_KITS may use it, and only this id, never another ":free"
+# model: the server refuses a free model off its list at save and at copy.
+# When Orca changes its free model, change it here and publish those kits again.
+FREE_MODEL = "orca/openrouter/cohere/north-mini-code:free"
+FREE_MODEL_KITS = {"brainy"}
 # Remote MCP servers hosted Orca can reach: their origins are in production's
 # ORCA_MCP_ALLOWED_ORIGINS (orca-agent-server docs/deployment/railway.md).
 # Any other URL fails at session create.
@@ -82,15 +89,21 @@ def check_words(folder, problems):
         problems.add(where, f"description is one sentence of at most {DESCRIPTION_MAX} characters, what the kit does for the visitor")
 
 
-def check_agent(where, body, problems):
+def kit_models(slug):
+    """The models a kit's agent may use: Luna, and Orca's free model for the
+    kits that run on it."""
+    return [MODEL, FREE_MODEL] if slug in FREE_MODEL_KITS else [MODEL]
+
+
+def check_agent(where, body, problems, models=(MODEL,)):
     if not isinstance(body, dict):
         problems.add(where, "define() returns no body")
         return
     unknown = set(body) - AGENT_FIELDS
     if unknown:
         problems.add(where, f"fields the server refuses: {sorted(unknown)}")
-    if body.get("model") != MODEL:
-        problems.add(where, f"model is {MODEL}, an Orca credit model anyone can copy")
+    if body.get("model") not in models:
+        problems.add(where, f"model is {' or '.join(models)}, an Orca credit model anyone can copy")
     if not isinstance(body.get("name"), str) or not body["name"].strip():
         problems.add(where, "name is required, so programs can find the copy")
     for i, tool in enumerate(body.get("tools") or []):
@@ -239,8 +252,8 @@ def check_example(folder, readme, problems):
         problems.add(where, f"answer is the agent's reply, 1 to {ANSWER_MAX} bytes")
     if not isinstance(record["cost_micro_usd"], int) or isinstance(record["cost_micro_usd"], bool) or record["cost_micro_usd"] <= 0:
         problems.add(where, "cost_micro_usd is the run's charge, a positive whole number")
-    if record["model"] != MODEL:
-        problems.add(where, f"model is {MODEL}, the kit's model")
+    if record["model"] not in kit_models(folder.name):
+        problems.add(where, f"model is {' or '.join(kit_models(folder.name))}, the kit's model")
     if not isinstance(record["session"], str) or not record["session"].startswith("session_"):
         problems.add(where, "session is the run's session id, its receipt in the usage ledger")
     try:
@@ -282,7 +295,7 @@ def check_kit(folder, problems):
     except Exception as error:  # a definition that does not load is the finding
         problems.add(f"kits/{folder.name}", f"definitions do not load: {error}")
         return
-    check_agent(f"kits/{folder.name}/agent.py", python.get("agent"), problems)
+    check_agent(f"kits/{folder.name}/agent.py", python.get("agent"), problems, kit_models(folder.name))
     if "template" in python:
         check_template(f"kits/{folder.name}/template.py", python["template"], skill_names, problems)
     for kind in sorted(set(python) | set(typescript)):

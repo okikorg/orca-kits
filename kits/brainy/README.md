@@ -1,6 +1,6 @@
 # Brainy
 
-Brainy is a friendly thinking partner for messy notes, the same Brainy you chat with in Brain Dump. Paste in a brain dump, meeting notes or a tangle of ideas, and it groups them under short headings, pulls out next steps and open questions, points out what connects, and helps you think a choice through one question at a time. Ask for a mind map and it draws one as a Mermaid diagram. It sees only what you paste into the chat, and saves nothing outside it.
+Brainy is a friendly thinking partner for messy notes, a public version of the Brainy chat in Brain Dump. Paste in a brain dump, meeting notes or a tangle of ideas, and it groups them under short headings, pulls out next steps and open questions, points out what connects, and helps you think a choice through one question at a time. Ask for a mind map and it draws one as a Mermaid diagram. It sees only what you paste into the chat, and saves nothing outside it.
 
 ## What it uses
 

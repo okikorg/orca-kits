@@ -31,6 +31,7 @@ ORIGIN = "https://api.orcapods.ai"
 # What each kit is asked, through `orca chat <agent> <question>`.
 QUESTIONS = {
     "scout": ["What's new in the latest Python release? Cite your sources."],
+    "brainy": ["Help me sort this: dentist sometime this month, Mum's birthday on Saturday and no gift yet, finish the slides for Thursday's team meeting, gym again?, read the book Jo lent me, fix the leaking tap, maybe start a newsletter about plants"],
 }
 
 

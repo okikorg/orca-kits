@@ -14,6 +14,7 @@ import check
 import kitlib
 
 SCOUT = kitlib.KITS / "scout"
+BRAINY = kitlib.KITS / "brainy"
 
 TEMPLATE_PY = '''
 def define(templates, skills):
@@ -248,6 +249,25 @@ def main():
                 failures.append(f"{name}: expected no problem, got {list(problems)}")
             else:
                 print(f"accepted: {name}")
+    # Orca's free model: only in the kits listed for it, and only its own id.
+    with tempfile.TemporaryDirectory(dir=kitlib.ROOT, prefix=".test-") as tmp:
+        free = check.FREE_MODEL.removeprefix("orca/openrouter/")
+        other_free = "orca/openrouter/minimax/minimax-m3.1-flash:free"
+        for name, slug, source, old, new, refused in (
+            ("the free model in a kit not listed for it", "scout", SCOUT, "openai/gpt-5.6-luna", free, True),
+            ("another free model in a listed kit", "brainy", BRAINY, check.FREE_MODEL, other_free, True),
+            ("the free model in a listed kit", "brainy", BRAINY, check.FREE_MODEL, check.FREE_MODEL, False),
+        ):
+            folder = pathlib.Path(tmp) / name.replace(" ", "-") / slug
+            shutil.copytree(source, folder, ignore=shutil.ignore_patterns("published.json", "__pycache__"))
+            for file in ("agent.py", "agent.ts"):
+                edit(folder, file, old, new)
+            problems = check.Problems()
+            check.check_kit(folder, problems)
+            if refused != any("Orca credit model" in p for p in problems) or (not refused and problems):
+                failures.append(f"{name}: expected {'a model problem' if refused else 'no problem'}, got {list(problems)}")
+            else:
+                print(f"{'refused' if refused else 'accepted'}: {name}")
     for failure in failures:
         print(failure, file=sys.stderr)
     if failures:
